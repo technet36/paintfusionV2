@@ -5,14 +5,14 @@
   </ul>
   <form ng-if="tabActive == 'login'" name="login" >
     <div class="form-group">
-    <label for="login">Login :</label>
-    <div id="summoner" >
-      <input type="text" class="form-control" name="login" id="login" placeholder="Summoner name" title="your in game name, not your lol username"/>
-      <select  >
-        <option ng-repeat="server in serverTab" value="{{server.id}}">{{server.name}}</option>
-      </select>
+      <label for="login">Login :</label>
+      <div id="summoner" >
+        <input type="text" class="form-control" name="login" id="login" placeholder="Summoner name" title="your in game name, not your lol username"/>
+        <select  >
+          <option ng-repeat="server in serverTab" value="{{server.id}}">{{server.name}}</option>
+        </select>
+      </div>
     </div>
-</div>
     <div class="form-group">
       <label for="pass">Password :</label>
       <input type="password" name="pass" id="pass" class="form-control" placeholder="Password" title="minimum 6 caracteres including letters and numbers"/>
@@ -24,39 +24,45 @@
     </div>
     <input class="form-control" type="submit" id="log_in" value="log in"/><span id="tool"></span>
   </form>
-  <div ng-if="tabActive == 'signup'">
-    <label for="full-name" >Full name :</label>
-    <input type="text" name="name" id="name" placeholder="Name" />
-    <input type="text" name="last-name" id="last-name" placeholder="Last name"/>
-    <label for="mail">Mail :</label>
-    <input type="email" name="mail" id="mail" placeholder="riven@lol.com" title="email only used for password recovery"/>
-    <label for="login">Login :</label>
-    <input type="text" name="login" placeholder="Summoner name" title="your in game name, not your lol username"/>
-    <div id="check"  > Uncheck</div>
-    <label for="server">server :</label>
-    <select id="server" name="server">
-      <option value="euw">euw</option>
-      <option value="na">na</option>
-      <option value="kr">kr</option>
-      <option value="eune">eune</option>
-      <option value="br">br</option>
-      <option value="lan">lan</option>
-      <option value="las">las</option>
-      <option value="tr">tr</option>
-      <option value="oce">oce</option>
-    </select>
-    <label for="pass-1">Password :</label>
-    <input type="password" name="pass1" id="pass-1" placeholder="Password" title="minimum 6 caracteres including letters and numbers"/>
-    <label for="pass-2">Password again :</label>
-    <input type="password" name="pass2" id="pass-2" placeholder="Password" title="minimum 6 caracteres including letters and numbers"/>
-
-    <div id="runesPage">
+  <form ng-if="tabActive == 'signup'">
+    <div class="form-group" >
+      <label for="first-name" >Full name :</label>
+      <input class="form-control" type="text" name="first-name" id="first-name" placeholder="Name" />
+    </div>
+    <div class="form-group">
+      <label for="last-name" >Full name :</label>
+      <input class="form-control" type="text" name="last-name" id="last-name" placeholder="Last name"/>
+    </div>
+    <div class="form-group">
+      <label for="mail">Mail :</label>
+      <input class="form-control" type="email" name="mail" id="mail" placeholder="riven@lol.com" title="email only used for password recovery"/>
+    </div>
+    <div class="form-group">
+      <label for="login">Login :</label>
+      <input class="form-control" type="text" name="login" placeholder="Summoner name" title="your in game name, not your lol username"/>
+      <div id="check"  > Uncheck</div>
+    </div>
+    <div class="form-group">
+      <label for="server">server :</label>
+      <select class="form-control" id="server" name="server">
+        <option ng-repeat="server in serverTab" value="{{server.id}}">{{server.name}}</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="pass-1">Password :</label>
+      <input class="form-control" type="password" name="pass1" id="pass-1" placeholder="Password" title="minimum 6 caracteres including letters and numbers"/>
+    </div>
+    <div class="form-group">
+      <label for="pass-2">Password again :</label>
+      <input class="form-control" type="password" name="pass2" id="pass-2" placeholder="Password" title="minimum 6 caracteres including letters and numbers"/>
+    </div>
+    <div >
       <img src="images/warning.png" id="imgWarning"/>
-      <div id="textWarning"><p >in order to check you are the owner of the account please rename one of your runes page as paintfusion</p> </div>
+      <div id="textWarning"><p >In order to check you are the owner of the account please rename one of your runes page as paintfusion</p> </div>
     </div>
     <div id="div_submit">
-      <input type="submit" id="submit" value="Sign up"/>
+      <input class="form-control" type="submit" id="submit" value="Sign up"/>
       <span id="alert"></span>
     </div>
-  </div>
+  </form>
 </div>
