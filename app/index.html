@@ -1,8 +1,8 @@
 <!doctype html>
-<html>
+<html ng-app="paintfusionApp">
   <head>
     <meta charset="utf-8">
-    <title></title>
+    <title>Paintfusion</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width">
     <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="styles/main.css">
     <!-- endbuild -->
   </head>
-  <body ng-app="paintfusionApp">
+  <body >
     <!--[if lte IE 8]>
       <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
     <![endif]-->
@@ -25,21 +25,13 @@
       <div class="navbar navbar-default" role="navigation">
         <div class="container">
           <div class="navbar-header">
-
-            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#js-navbar-collapse">
-              <span class="sr-only">Toggle navigation</span>
-              <span class="icon-bar"></span>
-              <span class="icon-bar"></span>
-              <span class="icon-bar"></span>
-            </button>
-
-            <a class="navbar-brand" href="#/">paintfusion</a>
+            <a class="navbar-brand" ui-sref="dashboard">paintfusion</a>
           </div>
 
           <div class="collapse navbar-collapse" id="js-navbar-collapse">
 
             <ul class="nav navbar-nav">
-              <li class="active"><a href="#/">Home</a></li>
+              <li class="active"><a  ui-sref="login">login</a></li>
               <li><a ng-href="#/">About</a></li>
               <li><a ng-href="#/">Contact</a></li>
             </ul>
@@ -48,8 +40,8 @@
       </div>
     </div>
 
-    <div class="container">
-    <div ng-include="'views/main.html'" ng-controller="MainCtrl"></div>
+    <div class="container-fluid">
+      <section ui-view>loading</section>
     </div>
 
     <div class="footer">
@@ -81,7 +73,10 @@
 
         <!-- build:js({.tmp,app}) scripts/scripts.js -->
         <script src="scripts/app.js"></script>
-        <script src="scripts/controllers/main.js"></script>
-        <!-- endbuild -->
+        <script src="scripts/routes.js"></script>
+
+    <script src="scripts/controllers/mainController.js"></script>
+    <script src="scripts/controllers/loginController.js"></script>
+    <!-- endbuild -->
 </body>
 </html>

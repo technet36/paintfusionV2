@@ -1,0 +1,70 @@
+<div class="container-fluid" id="tabs">
+  <ul class="nav nav-tabs">
+    <li class="active"><a ng-click="tabActive = 'login'">Log in</a></li>
+    <li><a ng-click="tabActive = 'signup'">Sign up</a></li>
+  </ul>
+  <form ng-if="tabActive == 'login'" name="login" >
+    <div class="form-group">
+    <label for="login">Login :</label>
+    <div id="summoner" class="form-control">
+      <input type="text" name="login" id="login" class="login" placeholder="Summoner name" title="your in game name, not your lol username"/>
+      <select class="server" id="server-log">
+        <option value="euw">euw</option>
+        <option value="na">na</option>
+        <option value="kr">kr</option>
+        <option value="eune">eune</option>
+        <option value="br">br</option>
+        <option value="lan">lan</option>
+        <option value="las">las</option>
+        <option value="tr">tr</option>
+        <option value="oce">oce</option>
+      </select>
+    </div>
+</div>
+    <div class="form-group">
+      <label for="pass">Password :</label>
+      <input type="password" name="pass" id="pass" class="form-control" placeholder="Password" title="minimum 6 caracteres including letters and numbers"/>
+    </div>
+      <p id="passwordTool" ng-click="pwdReco()"> Password forgotten ?</p>
+    <div id="toggle" class="form-group" ng-if="showMail">
+      <label for="mail">Mail :</label>
+      <input type="email" class="form-control" name="mail" id="mail1" placeholder="riven@lol.com" title="email used when registering"/>
+    </div>
+    <input class="form-control" type="submit" id="log_in" value="log in"/><span id="tool" class="nul"></span>
+  </form>
+  <div ng-if="tabActive == 'signup'">
+    <label for="full-name" >Full name :</label>
+    <input type="text" name="name" id="name" placeholder="Name" />
+    <input type="text" name="last-name" id="last-name" placeholder="Last name"/>
+    <label for="mail">Mail :</label>
+    <input type="email" name="mail" id="mail" placeholder="riven@lol.com" title="email only used for password recovery"/>
+    <label for="login">Login :</label>
+    <input type="text" name="login" class="login_2" placeholder="Summoner name" title="your in game name, not your lol username"/>
+    <div id="check" class="check" > Uncheck</div>
+    <label for="server">server :</label>
+    <select class="server_2" id="server" name="server">
+      <option value="euw">euw</option>
+      <option value="na">na</option>
+      <option value="kr">kr</option>
+      <option value="eune">eune</option>
+      <option value="br">br</option>
+      <option value="lan">lan</option>
+      <option value="las">las</option>
+      <option value="tr">tr</option>
+      <option value="oce">oce</option>
+    </select>
+    <label for="pass-1">Password :</label>
+    <input type="password" name="pass1" class="pass" id="pass-1" placeholder="Password" title="minimum 6 caracteres including letters and numbers"/>
+    <label for="pass-2">Password again :</label>
+    <input type="password" name="pass2" class="pass" id="pass-2" placeholder="Password" title="minimum 6 caracteres including letters and numbers"/>
+
+    <div id="runesPage">
+      <img src="images/warning.png" id="imgWarning"/>
+      <div id="textWarning"><p >in order to check you are the owner of the account please rename one of your runes page as paintfusion</p> </div>
+    </div>
+    <div id="div_submit">
+      <input type="submit" id="submit" value="Sign up"/>
+      <span id="alert"></span>
+    </div>
+  </div>
+</div>
