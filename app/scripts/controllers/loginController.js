@@ -8,7 +8,7 @@
  * Controller of the paintfusionApp
  */
 angular.module('paintfusionApp')
-  .controller('LoginCtrl', function ($state, $scope) {
+  .controller('LoginCtrl', function ($state, $scope, apiFactory) {
     $scope.tabActive = 'login';
     $scope.showMail = false;
     $scope.pwdReco = function() {
@@ -23,8 +23,32 @@ angular.module('paintfusionApp')
       {"id": "lan", "name": "Europe west"},
       {"id": "las", "name": "Europe west"},
       {"id": "tr", "name": "Turkey"},
-      {"id": "oce", "name": "Oceanie"},
+      {"id": "oce", "name": "Oceanie"}
+    ];
+    $scope.loginForm = {
+      "ids": {
+        "login": "",
+        "server": ""
+      },
+      "password": ""
+    };
 
-    ]
+  $scope.loginSubmit = function() {
+console.log($scope.loginForm.ids);
+  };
 
+
+    $scope.$watch( function(){ return $scope.loginForm.ids}, function(){
+     var pseudoExist =  apiFactory.getName($scope.loginForm.ids.login,$scope.loginForm.ids.server);
+      console.log('noob');
+      console.log(pseudoExist);
+    },true);
+
+/*
+ .then(function(){
+ console.log('pas noob');
+ console.log(pseudoExist);
+
+ })
+ */
   });
