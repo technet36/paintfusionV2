@@ -23,7 +23,8 @@ angular.module('paintfusionApp')
     this.userExist= function(pseudo, server) {
 
       return $http.get("http://localhost:80/paintfusion/app/utils/sql.php?action=userExist&server="+server+"&pseudo="+pseudo).then(function (data){
-        return data.exist;
+        //return true or false
+        return data.data.exist;
       });
     };
 

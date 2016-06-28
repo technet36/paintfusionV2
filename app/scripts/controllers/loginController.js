@@ -46,11 +46,11 @@ angular.module('paintfusionApp')
 console.log($scope.loginForm);
   };
 $scope.signupSubmit = function () {
-  console.log("form");
-  console.log($scope.signupForm);
-  if (sqlService.userExist($scope.signupForm.ids.pseudo,$scope.signupForm.ids.server)){
-    sqlService.signup($scope.signupForm.ids.pseudo,$scope.signupForm.ids.server,$scope.signupForm.password,$scope.signupForm.mail)
-  }
+  sqlService.userExist($scope.signupForm.ids.pseudo,$scope.signupForm.ids.server).then(function(exist) {
+    if (!exist){
+      sqlService.signup($scope.signupForm.ids.pseudo,$scope.signupForm.ids.server,$scope.signupForm.password,$scope.signupForm.mail)
+    }
+  });
 };
 
 
