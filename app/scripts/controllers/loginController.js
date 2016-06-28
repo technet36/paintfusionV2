@@ -44,11 +44,23 @@ angular.module('paintfusionApp')
 
   $scope.loginSubmit = function() {
 console.log($scope.loginForm);
+    // si loginForm est valide
+    sqlService.login($scope.loginForm.ids.pseudo,$scope.loginForm.ids.server,$scope.loginForm.password).then(function(userData) {
+      if(userData.sumId){
+        console.log('well logged');
+      }
+    });
   };
 $scope.signupSubmit = function () {
   sqlService.userExist($scope.signupForm.ids.pseudo,$scope.signupForm.ids.server).then(function(exist) {
     if (!exist){
-      sqlService.signup($scope.signupForm.ids.pseudo,$scope.signupForm.ids.server,$scope.signupForm.password,$scope.signupForm.mail)
+      sqlService.signup($scope.signupForm.ids.pseudo,$scope.signupForm.ids.server,$scope.signupForm.password,$scope.signupForm.mail).then(function() {
+        sqlService.userExist($scope.signupForm.ids.pseudo,$scope.signupForm.ids.server).then(function(exist) {
+          if (exist){
+            console.log("well registered");
+          }
+        });
+      });
     }
   });
 };

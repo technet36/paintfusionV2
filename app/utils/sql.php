@@ -92,40 +92,34 @@ switch ($_GET["action"]){
         break;//To reset password
   case "login":
         $server=$_GET["server"];
-        $login=$_GET["login"];
-        $pass =$_GET["pass"];
-        $pass.="é(-è_%ù*µ^schbjoui¨?bgv,:!RTDJtf§1996";
-        $pass = hash("sha256",$password);
+        $login=$_GET["pseudo"];
+        $password =$_GET["password"];
+        $password.="é(-è_%ù*µ^schbjoui¨?bgv,:!RTDJtf§1996";
+        $password = hash("sha256",$password);
 
 
-        $sql = "SELECT `id_user`,`nom`,`prenom`,`mat_gen`,`status`,`note`,`summonerId`,`privacy_lvl`,COUNT(*) as 'check' FROM `user_t` WHERE `pseudo`='$login' AND `server`= '$server' AND `password`='$pass'";
+        $sql = "SELECT `id_user`,`mat_gen`,`status`,`summonerId`,`privacy_lvl` FROM `user_t` WHERE `pseudo`='$login' AND `server`= '$server' AND `password`='$password'";
         $res = $bdd->query($sql);
         $user= $res-> fetch();
-        if ($user['check']) {
-            session_start();
-            $_SESSION["pseudo"] = $login;
-            $_SESSION["userId"] = $user['id_user'];
-            $_SESSION["lastName"] = $user['nom'];
-            $_SESSION["name"] = $user['prenom'];
-            $_SESSION["matGen"] = $user['mat_gen'];
-            $_SESSION["status"] = $user['status'];
-            $_SESSION["note"] = $user['note'];
-            $_SESSION["summonerId"] = $user['summonerId'];
-            $_SESSION["privacyLvl"] = $user['privacy_lvl'];
-            $_SESSION["server"] = $server;
-            echo (10);
-        }
-        else echo (11);
+
+          header('Content-Type: application/json');
+            echo (json_encode(array(
+                'matrix'=>$user['mat_gen'],
+                'status'=>$user['status'],
+                'sumId'=>$user['summonerId'],
+                'privacyLvl'=>$user['privacy_lvl']
+              )
+            ));
         break;//To log in
   case "signup":
     $server=$_GET["server"];
     $pseudo=$_GET["pseudo"];
-    $pass =$_GET["pass"];
-    $pass.="é(-è_%ù*µ^schbjoui¨?bgv,:!RTDJtf§1996";
-    $pass = hash("sha256",$password);
+    $password =$_GET["pass"];
+    $password.="é(-è_%ù*µ^schbjoui¨?bgv,:!RTDJtf§1996";
+    $password = hash("sha256",$password);
     $mail=$_GET["mail"];
     $sumId=$_GET["sumId"];
-    $sql = 'INSERT INTO `paintfusion`.`user_t` (`pseudo`, `password`, `email`, `server`, `summonerId`) VALUES (\''.$pseudo.'\', \''.$pass.'\',\''.$mail.'\',\''.$server.'\',\''.$sumId.'\')';
+    $sql = 'INSERT INTO `paintfusion`.`user_t` (`pseudo`, `password`, `email`, `server`, `summonerId`) VALUES (\''.$pseudo.'\', \''.$password.'\',\''.$mail.'\',\''.$server.'\',\''.$sumId.'\')';
 
     $response = $bdd->query($sql);
 
