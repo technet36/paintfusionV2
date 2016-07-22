@@ -13,7 +13,138 @@ try {
     header("location: ../error.php?error=".$e->getMessage());
     die("<font color=\"red\">SQLInsert: Erreur de connexion : " . $e->getMessage() . "</font>");
 }
+function check_SQL ($param) {  //uncomplete
+  return ( check_SQL($param) && preg_match('/((\%3D)|(=))[^\n]*((\%27)|(\')|(\-\-)|(\%3B)|(;))/i' ,$param)) ? $param : false;
+};  //uncomplete
 
+//########################
+//Verif of the right content type of the params
+//just need to do maVar = check_maVar();
+//to get maVar at the right value or false;
+//########################
+function check_idMatch () {
+  $idMatch = $_GET['idMatch'];
+  //The pattern is "one or more digit"
+  return ( check_SQL($idMatch) && preg_match('/\d+/',$idMatch )) ? $idMatch : false  ;
+};
+function check_tournamentType () {
+  $tournamentType = $_GET['tournamentType'];
+  return ( check_SQL($tournamentType) && preg_match('/\d+/',$tournamentType )) ? $tournamentType : false;
+};
+function check_winnerToMatch() {
+  $winnerToMatch = $_GET['winnerToMatch'];
+  return ( check_SQL($winnerToMatch) && preg_match('/\d+/',$winnerToMatch)) ? $winnerToMatch : false;
+};
+function check_looserToMatch() {
+  $looserToMatch = $_GET['looserToMatch'];
+  return ( check_SQL($looserToMatch) && preg_match('/\d+/',$looserToMatch)) ? $looserToMatch : false;
+};
+function check_note() {
+  $note = $_GET['note'];
+  return ( check_SQL($note)? $note : false);
+};  //uncomplete
+function check_privacyLvl() {
+  $privacyLvl = $_GET['privacyLvl'];
+  return ( check_SQL($privacyLvl) && preg_match('/\d+/',$privacyLvl)) ? $privacyLvl : false;
+};
+function check_idTournament() {
+  $idTournament = $_GET['idTournament'];
+  return ( check_SQL($idTournament) && preg_match('/\d+/',$idTournament)) ? $idTournament : false;
+};
+function check_idRiotGame() {
+  $idRiotGame = $_GET['idRiotGame'];
+  return ( check_SQL($idRiotGame) && preg_match('/\d+/',$idRiotGame)) ? $idRiotGame : false;
+
+};
+function check_nomTeam() {
+  $nomTeam = $_GET['nomTeam'];
+  return ( check_SQL($nomTeam) && preg_match('/.{3,255}/',$nomTeam)) ? $nomTeam : false;
+};  //uncomplete
+function check_premade() {
+  $premade = $_GET['premade'];
+  return ( check_SQL($premade) && preg_match('/\d./',$premade)) ? $premade : false;
+};
+function check_points() {
+  $points = $_GET['points'];
+  return ( check_SQL($points) && preg_match('/\d+/',$points)) ? $points : false;
+};
+function check_group() {
+  $group = $_GET['group'];
+  return ( check_SQL($group) && preg_match('/\d+/',$group)) ? $group : false;
+};
+function check_tournamentName() {
+  $tournamentName = $_GET['tournamentName'];
+  return ( check_SQL($tournamentName) && preg_match('/.{3,255}/',$tournamentName)) ? $tournamentName : false;
+};  //uncomplete
+function check_state() {
+  $state = $_GET['state'];
+  return ( check_SQL($state) && preg_match('/\d+/',$state)) ? $state : false;
+};
+function check_host() {
+  $host = $_GET['host'];
+  return ( check_SQL($host) && preg_match('/.{3,255}/',$host)) ? $host: false;
+};  //uncomplete
+function check_maxPlayer() {
+  $maxPlayer = $_GET['maxPlayer'];
+  return ( check_SQL($maxPlayer) && preg_match('/\d+/',$maxPlayer)) ? $maxPlayer : false;
+};
+function check_map () {
+  $map = $_GET['map'];
+  //The pattern is "SUMMONERS_RIFT or TWISTED_TREELINE or HOWLING_ABYSS
+  if ( check_SQL($map) && preg_match('/SUMMONERS_RIFT|TWISTED_TREELINE|HOWLING_ABYSS/',$map ))
+    return true;
+  else return false;
+};
+function check_date() {
+$date = $_GET['date'];//need a timestamp
+  return (date($date)) ? $date : false;
+};
+function check_registrationMaxDate() {
+  $registrationMaxDate = $_GET['registrationMaxDate'];
+  return (date($registrationMaxDate)) ? $registrationMaxDate : false;
+};
+function check_idRiotTournament() {
+  $idRiotTournament = $_GET['idRiotTournament'];
+  return ( check_SQL($idRiotTournament) && preg_match('/\d+/',$idRiotTournament)) ? $idRiotTournament : false;
+};
+function check_idUser() {
+  $idUser = $_GET['idUser'];
+  return ( check_SQL($idUser) && preg_match('/\d+/',$idUser)) ? $idUser : false;
+};
+function check_pseudo(){
+  $pseudo = $_GET['pseudo'];
+  return ( check_SQL($pseudo) && preg_match('/.{3,255}/',$pseudo)) ? $pseudo : false;
+};  //uncomplete
+function check_password(){
+  $password= $_GET['password'];
+  return ( check_SQL($password) && preg_match('/.{3,255}/',$password)) ? $password : false;
+};  //uncomplete
+function check_server(){
+  $server= $_GET['server'];
+  return ( check_SQL($server) && preg_match('/NA|EUNE|EUW|LAN|LAS|BR|TR|RU|OCE/',$server)) ? $server : false;
+};
+function check_matGen(){
+  $matGen= $_GET['matGen'];
+  return ( check_SQL($matGen)) ? $matGen: false;
+};  //uncomplete
+function check_status(){
+  $status= $_GET['status'];
+  return ( check_SQL($status) && preg_match('/\d{,5}/',$status)) ? $status: false;
+};
+function check_summonerId() {
+  $summonerId = $_GET['summonerId'];
+  return ( check_SQL($summonerId) && preg_match('/\d+/',$summonerId)) ? $summonerId : false;
+};
+function check_email(){
+
+$mail = $_GET['mail'];//the pattern is "any letter or number followed by @ followed by any letter or number
+//followed by . followed by 2-4 letters and maybe another . (for tlds like co.uk)
+
+  if ( check_SQL($mail) && preg_match('/^[A-z0-9_\-]+[@][A-z0-9_\-]+([.][A-z0-9_\-]+)+[A-z.]{2,4}$/', $mail))
+    return true;
+  else return false;
+};
+//########################
 
 
 switch ($_GET["action"]){
@@ -126,19 +257,53 @@ switch ($_GET["action"]){
     echo (true);
         break;
   case "userExist":
-    $server=$_GET["server"];
-    $pseudo=$_GET["pseudo"];
-    $data = array();
-    $sql = 'SELECT COUNT(*) AS \'exist\' FROM `paintfusion`.`user_t` WHERE pseudo=\''.$pseudo.'\' AND server=\''.$server.'\'';
-    $res = $bdd->query($sql);
     header('Content-Type: application/json');
+    $server= check_server();
+    $pseudo= check_pseudo();
+    $summonerId = check_summonerId();
+    if ($server && $pseudo){
+      $sql = 'SELECT COUNT(*) AS `exist` FROM `paintfusion`.`user_t` WHERE pseudo=\''.$pseudo.'\' AND server=\''.$server.'\'';
+    }
+    elseif ($server && $summonerId) {
+      $sql = 'SELECT COUNT(*) AS `exist` FROM `paintfusion`.`user_t` WHERE summonerId=\''.$summonerId.'\' AND server=\''.$server.'\'';
+    }
+    else {
+      echo (json_encode(array('exist'=>0,'msg'=>'invalid values, pseudo and/or summonerId and server are needed')));
+      die();
+    }
+    $res = $bdd->query($sql);
 
     $response= $res-> fetch();
     if (isset($response['exist']) && $response['exist'])
-      echo (json_encode(array('exist'=>1)));
+      echo (json_encode(array('exist'=>1,'msg'=>'the user exist')));
     else
-      echo (json_encode(array('exist'=>0)));
+      echo (json_encode(array('exist'=>0,'msg'=>'no account for this user')));
       break;
+  case "userProfile":
+
+    header('Content-Type: application/json');
+    $server= check_server();
+    $pseudo= check_pseudo();
+    $summonerId = check_summonerId();
+    if ($server && $pseudo){
+      $sql = 'SELECT id_user,pseudo,email,server,mat_gen, note, stauts, privacy_lvl, summonerId FROM `paintfusion`.`user_t` WHERE pseudo=\''.$pseudo.'\' AND server=\''.$server.'\'';
+    }
+    elseif ($server && $summonerId) {
+      $sql = 'SELECT id_user,pseudo,email,server,mat_gen, note, stauts, privacy_lvl, summonerId FROM `paintfusion`.`user_t` WHERE summonerId=\''.$summonerId.'\' AND server=\''.$server.'\'';
+    }
+    else {
+      echo (json_encode(array('exist'=>0,'msg'=>'invalid values, pseudo and/or summonerId and server are needed')));
+      die();
+    }
+    $res = $bdd->query($sql);
+
+    $response= $res-> fetch();
+    if (isset($response['pseudo']) && $response['pseudo'])
+      echo (json_encode(array('msg'=>'the user exist')).json_encode($response));
+    else
+      echo (json_encode(array('exist'=>0,'msg'=>'no account for this user')));
+    break;
+        break;
     default:
         echo ("failed sql.php");
         break;

@@ -45,6 +45,7 @@ angular.module('paintfusionApp')
   $scope.loginSubmit = function() {
 console.log($scope.loginForm);
     // si loginForm est valide
+
     sqlService.login($scope.loginForm.ids.pseudo,$scope.loginForm.ids.server,$scope.loginForm.password).then(function(userData) {
       if(userData.sumId){
         console.log('well logged');

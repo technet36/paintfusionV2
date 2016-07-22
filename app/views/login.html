@@ -1,30 +1,35 @@
 <div class="container-fluid" id="tabs">
-  <ul class="nav nav-tabs">
-    <li ng-class="{'active': tabActive=='login'}"><a ng-click="tabActive = 'login'">Log in</a></li>
-    <li ng-class="{'active': tabActive=='signup'}"><a ng-click="tabActive = 'signup'">Sign up</a></li>
-  </ul>
-  <form ng-if="tabActive == 'login'" name="login" >
-    <div class="form-group">
-      <label for="login">Login :</label>
-      <div id="summoner" >
-        <input type="text" class="form-control" ng-model="loginForm.ids.pseudo" ng-model-options="{ debounce: 500 }" name="login" id="login" placeholder="Summoner name" title="your in game name, not your lol username"/>
-        <select ng-model="loginForm.ids.server" >
-          <option ng-repeat="server in serverTab" value="{{server.id}}">{{server.name}}</option>
-        </select>
+  <div class="row">
+    <div class="hidden-xs col-sm-7 section">
+      Some stuff
+    </div>
+    <div class="col-xs-12 col-sm-4 section">
+    <ul class="nav nav-tabs">
+      <li ng-class="{'active': tabActive=='login'}"><a ng-click="tabActive = 'login'">Log in</a></li>
+      <li ng-class="{'active': tabActive=='signup'}"><a ng-click="tabActive = 'signup'">Sign up</a></li>
+    </ul>
+    <form ng-if="tabActive == 'login'" name="login"  >
+      <div class="form-group">
+        <label for="login">Login :</label>
+        <div id="summoner" >
+          <input type="text" class="form-control" ng-model="loginForm.ids.pseudo" ng-model-options="{ debounce: 500 }" name="login" id="login" placeholder="Summoner name" title="your in game name, not your lol username"/>
+          <select ng-model="loginForm.ids.server" >
+            <option ng-repeat="server in serverTab" value="{{server.id}}">{{server.name}}</option>
+          </select>
+        </div>
       </div>
-    </div>
-    <div class="form-group">
-      <label for="pass">Password :</label>
-      <input type="password" name="pass" id="pass" class="form-control" placeholder="Password" ng-model="loginForm.password" title="minimum 6 caracteres including letters and numbers"/>
-    </div>
-      <p id="passwordTool" ng-click="pwdReco()"> Password forgotten ?</p>
-    <div id="toggle" class="form-group" ng-if="showMail">
-      <label for="mail">Mail :</label>
-      <input type="email" class="form-control" name="mail" id="mail1" placeholder="riven@lol.com" title="email used when registering"/>
-    </div>
-    <input class="form-control" type="button" ng-click="loginSubmit()" value="log in"/><span id="tool"></span>
-  </form>
-  <form ng-if="tabActive == 'signup'" name="signup">
+      <div class="form-group">
+        <label for="pass">Password :</label>
+        <input type="password" name="pass" id="pass" class="form-control" placeholder="Password" ng-model="loginForm.password" title="minimum 6 caracteres including letters and numbers"/>
+      </div>
+        <p id="passwordTool" ng-click="pwdReco()"> Password forgotten ?</p>
+      <div id="toggle" class="form-group" ng-if="showMail">
+        <label for="mail">Mail :</label>
+        <input type="email" class="form-control" name="mail" id="mail1" placeholder="riven@lol.com" title="email used when registering"/>
+      </div>
+      <input class="form-control" type="button" ng-click="loginSubmit()" value="log in"/><span id="tool"></span>
+    </form>
+    <form ng-if="tabActive == 'signup'" name="signup" >
     <div class="form-group">
     </div>
     <div class="form-group">
@@ -59,4 +64,6 @@
       <span id="alert"></span>
     </div>
   </form>
+  </div>
+  </div>
 </div>
