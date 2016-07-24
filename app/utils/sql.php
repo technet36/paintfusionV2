@@ -1,10 +1,12 @@
 <?php
 
 header('Access-Control-Allow-Origin: http://localhost:9000');
+header('Content-Type: application/json');
 $BDD_host="localhost";
 $BDD_user="root";
 $BDD_password="admin";
 $BDD_base="paintfusion";
+$sql=false;
 try {
     $bdd = new PDO('mysql:host='.$BDD_host.';dbname='.$BDD_base,$BDD_user,$BDD_password,array(PDO::FETCH_NAMED, PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION));
 
@@ -144,34 +146,18 @@ $mail = $_GET['mail'];//the pattern is "any letter or number followed by @ follo
     return true;
   else return false;
 };
+function check_action(){
+  $action= $_GET['action'];
+  return ( check_SQL($action) && preg_match('/login|signup|userExist|userProfile/',$action)) ? $action: false;
+};
 //########################
+function encrypt_password ($pass) {
+  $pass.="é(-è_%ù*µ^schbjoui¨?bgv,:!RTDJtf§1996";
+  return hash("sha256",$pass);
+}
 
 
-switch ($_GET["action"]){
-  case "auth": // $_GET["server"] , $_GET["name"]
-    $name=$_POST["name"];
-    $lastName=$_POST["lastName"];
-    $mail=$_POST["mail"];
-    $login=$_POST["login"];
-    $server=$_POST["server"];
-    $summonerId=$_POST["summonerId"];
-    $password=$_POST["pass"];
-    $pass.="é(-è_%ù*µ^schbjoui¨?bgv,:!RTDJtf§1996";
-    $password = hash("sha256",$password);
-
-
-    $sql = "SELECT COUNT(*) as 'check' FROM `user_t` WHERE `summonerId`='$summonerId' AND `server`= '$server'";
-    $res = $bdd->query($sql);
-    $test= $res-> fetch();
-    $test = $test['check'];
-
-    if ($test == 0){
-      $sql =  "INSERT INTO user_t (`pseudo`,`password`,`nom`,`prenom`,`email`,`server`,`summonerId`) VALUES ('$login','$password','$name','$lastName','$mail','$server','$summonerId')";
-      $res = $bdd->query($sql);
-      echo (1);
-    }
-    else echo (0);
-    break;//To sign up
+switch (check_action()){
   case "mail":
         $server=$_POST["server"];
         $login=$_POST["login"];
@@ -222,19 +208,25 @@ switch ($_GET["action"]){
         elseif ( $dest!=$test['email']) echo ("11");//wrong email
         break;//To reset password
   case "login":
-        $server=$_GET["server"];
-        $login=$_GET["pseudo"];
-        $password =$_GET["password"];
-        $password.="é(-è_%ù*µ^schbjoui¨?bgv,:!RTDJtf§1996";
-        $password = hash("sha256",$password);
+    $server= check_server();
+    $pseudo= check_pseudo();
+    $password= check_password();
+    if ($server && $pseudo && $password){
+      $password= encrypt_password($password);
+      $sql = "SELECT `id_user`,`mat_gen`,`status`,`summonerId`,`privacy_lvl` FROM `user_t` WHERE `pseudo`='$pseudo' AND `server`= '$server' AND `password`='$password'";
+    }
+    else {
+      header("location: ../error.php?error=".$e->getMessage());
+      echo (json_encode(array('code'=>0,'msg'=>'invalid values. pseudo, password and server are needed')));
+      die();
+    }
 
-
-        $sql = "SELECT `id_user`,`mat_gen`,`status`,`summonerId`,`privacy_lvl` FROM `user_t` WHERE `pseudo`='$login' AND `server`= '$server' AND `password`='$password'";
         $res = $bdd->query($sql);
         $user= $res-> fetch();
 
-          header('Content-Type: application/json');
             echo (json_encode(array(
+                'code'=> 1,
+                'msg'=> 'login done',
                 'matrix'=>$user['mat_gen'],
                 'status'=>$user['status'],
                 'sumId'=>$user['summonerId'],
@@ -243,21 +235,29 @@ switch ($_GET["action"]){
             ));
         break;//To log in
   case "signup":
-    $server=$_GET["server"];
-    $pseudo=$_GET["pseudo"];
-    $password =$_GET["pass"];
-    $password.="é(-è_%ù*µ^schbjoui¨?bgv,:!RTDJtf§1996";
-    $password = hash("sha256",$password);
-    $mail=$_GET["mail"];
-    $sumId=$_GET["sumId"];
-    $sql = 'INSERT INTO `paintfusion`.`user_t` (`pseudo`, `password`, `email`, `server`, `summonerId`) VALUES (\''.$pseudo.'\', \''.$password.'\',\''.$mail.'\',\''.$server.'\',\''.$sumId.'\')';
+    $mail =check_email();
+    $sumId=check_summonerId();
+    $server= check_server();
+    $pseudo= check_pseudo();
+    $password= check_password();
+    if ($server && $pseudo && $password && $sumId){
+      $password= encrypt_password($password);
+      $sql = 'INSERT INTO `paintfusion`.`user_t` (`pseudo`, `password`, `email`, `server`, `summonerId`) VALUES (\''.$pseudo.'\', \''.$password.'\',\''.$mail.'\',\''.$server.'\',\''.$sumId.'\')';
+    }
+    else {
+      header("location: ../error.php?error=".$e->getMessage());
+      echo (json_encode(array('code'=>0,'msg'=>'invalid values. pseudo, password, summonerId and server are needed')));
+      die();
+    }
+
 
     $response = $bdd->query($sql);
 
-    echo (true);
-        break;
+    echo (json_encode(array('code'=>1,'msg'=>'Registration done')));
+
+
+    break;//To register
   case "userExist":
-    header('Content-Type: application/json');
     $server= check_server();
     $pseudo= check_pseudo();
     $summonerId = check_summonerId();
@@ -268,44 +268,45 @@ switch ($_GET["action"]){
       $sql = 'SELECT COUNT(*) AS `exist` FROM `paintfusion`.`user_t` WHERE summonerId=\''.$summonerId.'\' AND server=\''.$server.'\'';
     }
     else {
-      echo (json_encode(array('exist'=>0,'msg'=>'invalid values, pseudo and/or summonerId and server are needed')));
+      header("location: ../error.php?error=".$e->getMessage());
+      echo (json_encode(array('code'=>0,'msg'=>'invalid values, pseudo and/or summonerId and server are needed')));
       die();
     }
     $res = $bdd->query($sql);
 
     $response= $res-> fetch();
-    if (isset($response['exist']) && $response['exist'])
-      echo (json_encode(array('exist'=>1,'msg'=>'the user exist')));
+    if (isset($response['exist']) && $response['exist']==1)
+      echo (json_encode(array('code'=>1,'msg'=>'the user exist')));
     else
-      echo (json_encode(array('exist'=>0,'msg'=>'no account for this user')));
+      echo (json_encode(array('code'=>0,'msg'=>'no account for this user (or several)')));
       break;
   case "userProfile":
 
-    header('Content-Type: application/json');
     $server= check_server();
     $pseudo= check_pseudo();
     $summonerId = check_summonerId();
     if ($server && $pseudo){
-      $sql = 'SELECT id_user,pseudo,email,server,mat_gen, note, stauts, privacy_lvl, summonerId FROM `paintfusion`.`user_t` WHERE pseudo=\''.$pseudo.'\' AND server=\''.$server.'\'';
+      $sql = 'SELECT COUNT(*) AS `nb`,id_user,pseudo,email,server,mat_gen, note, stauts, privacy_lvl, summonerId FROM `paintfusion`.`user_t` WHERE pseudo=\''.$pseudo.'\' AND server=\''.$server.'\'';
     }
     elseif ($server && $summonerId) {
       $sql = 'SELECT id_user,pseudo,email,server,mat_gen, note, stauts, privacy_lvl, summonerId FROM `paintfusion`.`user_t` WHERE summonerId=\''.$summonerId.'\' AND server=\''.$server.'\'';
     }
     else {
+      header("location: ../error.php?error=".$e->getMessage());
       echo (json_encode(array('exist'=>0,'msg'=>'invalid values, pseudo and/or summonerId and server are needed')));
       die();
     }
     $res = $bdd->query($sql);
 
     $response= $res-> fetch();
-    if (isset($response['pseudo']) && $response['pseudo'])
-      echo (json_encode(array('msg'=>'the user exist')).json_encode($response));
+    if (isset($response['pseudo']) && $response['pseudo'] && $response['nb']==1)
+      echo (json_encode(array('code'=>1,'msg'=>'the user exist')).json_encode($response));
     else
-      echo (json_encode(array('exist'=>0,'msg'=>'no account for this user')));
+      echo (json_encode(array('code'=>0,'msg'=>'no account for this user (or several)')));
     break;
         break;
     default:
-        echo ("failed sql.php");
+        echo (json_encode(array('code'=>0,'msg'=>'failed sql.php')));
         break;
 
 }
