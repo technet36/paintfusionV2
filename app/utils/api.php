@@ -1,9 +1,33 @@
 <?php
 
+header('Content-Type: application/json');
+header('Access-Control-Allow-Origin: http://localhost:9000');
+
 $api_key="f7b8a452-ec7b-48d0-9681-fcd97a0a4321";
 $curl = 0;
+//
 $response = "failed";
+function execute_request($url){
+// DEBUT D'ENVOIE DE LA REQUETE
+  $curl = curl_init();
+  curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+  curl_setopt($curl, CURLOPT_HEADER, 0);
+  curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+  curl_setopt($curl, CURLOPT_URL, $url);
+  $response = curl_exec($curl);
+  $response = json_decode($response);
+  if (isset($response->{"status"},$response->{"status"}->{"message"})){
+    echo ('{"msg":"'.$response->{"status"}->{"message"}.'","code":'.$response->{"status"}->{"status_code"}.'}');
+    die();
+  }
+  curl_close($curl);
+  return $response;
 
+};
+function check_SQL ($param) {  //uncomplete
+  return $param;
+  //return ( check_SQL($param) && preg_match('/((\%3D)|(=))[^\n]*((\%27)|(\')|(\-\-)|(\%3B)|(;))/i' ,$param)) ? $param : false;
+};  //uncomplete
 function check_pseudo(){
   $pseudo = $_GET['pseudo'];
   return ( check_SQL($pseudo) && preg_match('/.{3,255}/',$pseudo)) ? $pseudo : false;
@@ -14,7 +38,7 @@ function check_server(){
 };
 function check_action(){
   $action= $_GET['action'];
-  return ( check_SQL($action) && preg_match('/getRunesPages|userProfile/',$action)) ? $action: false;
+  return ( check_SQL($action) && preg_match('/getRunesPages|getProfile|getProfileByPseudo/',$action)) ? $action: false;
 };
 function check_idMatch () {
   $idMatch = $_GET['idMatch'];
@@ -41,45 +65,59 @@ function check_summonerId() {
 
 // Complétez $url avec l'url cible (l'url de la page que vous voulez télécharger)
 switch (check_action()){
-    case "userProfile":
-      $pseudo = check_pseudo();
-      $server = check_server();
-      if ($server && $pseudo ){
-        $url="https://".$server.".api.pvp.net/api/lol/euw/v1.4/summoner/by-name/".$pseudo."?api_key=".$api_key;
-      }
-      else {
-        header("location: ../error.php?error=".$e->getMessage());
-        echo (json_encode(array('code'=>0,'msg'=>'invalid values. pseudo and server are needed')));
-        die();
-      }
-        //$url = urlencode($url);
-      //echo $url;
+  case "getProfile":
+    $summonerId = check_summonerId();
+    $server = check_server();
+    if ($server && $summonerId ){
+      $url="https://".$server.".api.pvp.net/api/lol/euw/v1.4/summoner/".$summonerId."?api_key=".$api_key;
+    }
+    else {
+      echo (json_encode(array('code'=>0,'msg'=>'invalid values. summonerId and server are needed')));
+      die();
+    }
+    $response = execute_request($url);
+    $response = json_encode($response->{$summonerId});
+    echo ('{"profil":'.$response.',"msg":"ok","code":0}');
+    break;
+  case "getProfileByPseudo":
+    $pseudo = check_pseudo();
+    $server = check_server();
+    if ($server && $pseudo ){
+      $url="https://".$server.".api.pvp.net/api/lol/euw/v1.4/summoner/by-name/".$pseudo."?api_key=".$api_key;
+    }
+    else {
+      //header("location: ../error.php?error=".$e->getMessage());
+      echo (json_encode(array('code'=>300,'msg'=>'invalid values. pseudo and server are needed','location'=>'getting the profile by the pseudo')));
+      die();
+    }
+    $response = execute_request($url);
+    $response = json_encode($response->{$pseudo});
+    echo ('{"profil":'.$response.',"msg":"ok","code":0}');
 
-      break;
-    case "getRunesPages": //$_GET["server"] , $_GET["id"]
-      $server = check_server();
-      $summonerId = check_summonerId();
-      if ($server && $pseudo ){
-        $url="https://".$server.".api.pvp.net/api/lol/euw/v1.4/summoner/".$summonerId."/runes?api_key=".$api_key;
-      }
-      else {
-        header("location: ../error.php?error=".$e->getMessage());
-        echo (json_encode(array('code'=>0,'msg'=>'invalid values. summonerId and server are needed')));
-        die();
-      }
-        break;
+    break;
+  case "getRunesPages":
+    $server = check_server();
+    $summonerId = check_summonerId();
+    if ($server && $summonerId ){
+      $url="https://".$server.".api.pvp.net/api/lol/euw/v1.4/summoner/".$summonerId."/runes?api_key=".$api_key;
+    }
+    else {
+      //header("location: ../error.php?error=".$e->getMessage());
+      echo (json_encode(array('code'=>1,'msg'=>'invalid values. summonerId and server are needed','location'=>'trying to get the runes pages')));
+      die();
+    }
+    $response = execute_request($url);
+    $response = json_encode($response->{$summonerId}->{"pages"});
+    echo ('{"pages":'.$response.',"msg":"ok","code":0}');
+
+    break;
+  default:
+    //header("location: ../error.php?error=".$e->getMessage());
+    echo (json_encode(array('code'=>0,'msg'=>'failed api.php','action'=>check_action())));
+    die();
+    break;
+
 }
-// DEBUT D'ENVOIE DE LA REQUETE
-    $curl = curl_init();
-    curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
-    curl_setopt($curl, CURLOPT_URL, $url);
-    curl_setopt($curl, CURLOPT_HEADER, 0);
-    curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-    $response = curl_exec($curl);
-    curl_close($curl);
+
+
 //FIN D'ENVOIE
-
-header('Content-Type: application/json');
-header('Access-Control-Allow-Origin: http://localhost:9000');
-echo $response;
-

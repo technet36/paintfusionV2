@@ -8,6 +8,7 @@
       <li ng-class="{'active': tabActive=='login'}"><a ng-click="tabActive = 'login'">Log in</a></li>
       <li ng-class="{'active': tabActive=='signup'}"><a ng-click="tabActive = 'signup'">Sign up</a></li>
     </ul>
+
     <form ng-if="tabActive == 'login'" name="login"  >
       <div class="form-group">
         <label for="login">Login :</label>
@@ -22,13 +23,14 @@
         <label for="pass">Password :</label>
         <input type="password" name="pass" id="pass" class="form-control" placeholder="Password" ng-model="loginForm.password" title="minimum 6 caracteres including letters and numbers"/>
       </div>
-        <p id="passwordTool" ng-click="pwdReco()"> Password forgotten ?</p>
+        <a id="passwordTool" ng-click="pwdReco()"> Password forgotten ?</a>
       <div id="toggle" class="form-group" ng-if="showMail">
         <label for="mail">Mail :</label>
         <input type="email" class="form-control" name="mail" id="mail1" placeholder="riven@lol.com" title="email used when registering"/>
       </div>
       <input class="form-control" type="button" ng-click="loginSubmit()" value="log in"/><span id="tool"></span>
     </form>
+
     <form ng-if="tabActive == 'signup'" name="signup" >
     <div class="form-group">
     </div>
@@ -64,6 +66,7 @@
       <span id="alert"></span>
     </div>
   </form>
+
   </div>
   </div>
 </div>

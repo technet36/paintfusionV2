@@ -8,7 +8,10 @@ $BDD_password="admin";
 $BDD_base="paintfusion";
 $sql=false;
 try {
-    $bdd = new PDO('mysql:host='.$BDD_host.';dbname='.$BDD_base,$BDD_user,$BDD_password,array(PDO::FETCH_NAMED, PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION));
+    $bdd = new PDO('mysql:host='.$BDD_host.';dbname='.$BDD_base,$BDD_user,$BDD_password,
+      array(  PDO::FETCH_NAMED,
+              PDO::ATTR_TIMEOUT => 1,
+              PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION));
 
 
 } catch (PDOException $e) {
@@ -16,7 +19,8 @@ try {
     die("<font color=\"red\">SQLInsert: Erreur de connexion : " . $e->getMessage() . "</font>");
 }
 function check_SQL ($param) {  //uncomplete
-  return ( check_SQL($param) && preg_match('/((\%3D)|(=))[^\n]*((\%27)|(\')|(\-\-)|(\%3B)|(;))/i' ,$param)) ? $param : false;
+  return $param;
+  //return ( check_SQL($param) && preg_match('/((\%3D)|(=))[^\n]*((\%27)|(\')|(\-\-)|(\%3B)|(;))/i' ,$param)) ? $param : false;
 };  //uncomplete
 
 //########################
@@ -148,7 +152,7 @@ $mail = $_GET['mail'];//the pattern is "any letter or number followed by @ follo
 };
 function check_action(){
   $action= $_GET['action'];
-  return ( check_SQL($action) && preg_match('/login|signup|userExist|userProfile/',$action)) ? $action: false;
+  return ( preg_match('/login|signup|userExist|userProfile/',$action)) ? $action: false;
 };
 //########################
 function encrypt_password ($pass) {
@@ -216,7 +220,7 @@ switch (check_action()){
       $sql = "SELECT `id_user`,`mat_gen`,`status`,`summonerId`,`privacy_lvl` FROM `user_t` WHERE `pseudo`='$pseudo' AND `server`= '$server' AND `password`='$password'";
     }
     else {
-      header("location: ../error.php?error=".$e->getMessage());
+      //header("location: ../error.php?error=".$e->getMessage());
       echo (json_encode(array('code'=>0,'msg'=>'invalid values. pseudo, password and server are needed')));
       die();
     }
@@ -224,39 +228,69 @@ switch (check_action()){
         $res = $bdd->query($sql);
         $user= $res-> fetch();
 
-            echo (json_encode(array(
-                'code'=> 1,
-                'msg'=> 'login done',
-                'matrix'=>$user['mat_gen'],
-                'status'=>$user['status'],
-                'sumId'=>$user['summonerId'],
-                'privacyLvl'=>$user['privacy_lvl']
-              )
-            ));
+    if ($user){
+      echo (json_encode(array(
+          'code'=> 1,
+          'msg'=> 'login done',
+          'matrix'=>$user['mat_gen'],
+          'status'=>$user['status'],
+          'sumId'=>$user['summonerId'],
+          'privacyLvl'=>$user['privacy_lvl']
+        )
+      ));
+    }
+    else{
+      echo (json_encode(array(
+          'code'=> 1,
+          'msg'=> 'Wrong combinaison'
+        )
+      ));
+    }
         break;//To log in
   case "signup":
     $mail =check_email();
-    $sumId=check_summonerId();
     $server= check_server();
     $pseudo= check_pseudo();
     $password= check_password();
+    $sumId= check_summonerId();
     if ($server && $pseudo && $password && $sumId){
       $password= encrypt_password($password);
-      $sql = 'INSERT INTO `paintfusion`.`user_t` (`pseudo`, `password`, `email`, `server`, `summonerId`) VALUES (\''.$pseudo.'\', \''.$password.'\',\''.$mail.'\',\''.$server.'\',\''.$sumId.'\')';
+
+      $userExist = $bdd->prepare('SELECT COUNT(*) AS `exist` FROM `paintfusion`.`user_t` WHERE pseudo=:pseudo AND server=:server');
+      $userExist->bindParam(':pseudo',$pseudo);
+      $userExist->bindParam(':server',$server);
+
+      $insert = $bdd->prepare('INSERT INTO `paintfusion`.`user_t` (`pseudo`, `password`, `email`, `server`, `summonerId`) VALUES (:pseudo, :password,:mail,:server,:sumId)');
+      $insert->bindParam(':server',$server);
+      $insert->bindParam(':pseudo',$pseudo);
+      $insert->bindParam(':password',$password);
+      $insert->bindParam(':mail',$mail);
+      $insert->bindParam(':sumId',$sumId);
     }
     else {
-      header("location: ../error.php?error=".$e->getMessage());
-      echo (json_encode(array('code'=>0,'msg'=>'invalid values. pseudo, password, summonerId and server are needed')));
+      echo (json_encode(array('code'=>1,'msg'=>'invalid values. pseudo, password, summonerId and server are needed')));
       die();
     }
+    $bdd->beginTransaction();
+    $userExist->execute();
+    $user = $userExist->fetch();
+    $nbUser = $user['exist'];
+    print_r( $user);
+    if (!$nbUser){
+      $insert->execute();
+      echo (json_encode(array('code'=>0,'msg'=>'Registration done')));
+    }
+    else
+      echo (json_encode(array('code'=>1,'msg'=>'user already exist')));
+
+    $bdd->commit();
 
 
-    $response = $bdd->query($sql);
+   // $response = $bdd->query($sql);
 
-    echo (json_encode(array('code'=>1,'msg'=>'Registration done')));
+break;
 
-
-    break;//To register
+    //break;//To register
   case "userExist":
     $server= check_server();
     $pseudo= check_pseudo();
@@ -278,7 +312,7 @@ switch (check_action()){
     if (isset($response['exist']) && $response['exist']==1)
       echo (json_encode(array('code'=>1,'msg'=>'the user exist')));
     else
-      echo (json_encode(array('code'=>0,'msg'=>'no account for this user (or several)')));
+      echo (json_encode(array('code'=>2,'msg'=>'no account for this user (or several)')));
       break;
   case "userProfile":
 
@@ -293,7 +327,7 @@ switch (check_action()){
     }
     else {
       header("location: ../error.php?error=".$e->getMessage());
-      echo (json_encode(array('exist'=>0,'msg'=>'invalid values, pseudo and/or summonerId and server are needed')));
+      echo (json_encode(array('code'=>0,'msg'=>'invalid values, pseudo and/or summonerId and server are needed')));
       die();
     }
     $res = $bdd->query($sql);
@@ -306,7 +340,9 @@ switch (check_action()){
     break;
         break;
     default:
-        echo (json_encode(array('code'=>0,'msg'=>'failed sql.php')));
+      //header("location: ../error.php?error=".$e->getMessage());
+      echo (json_encode(array('code'=>0,'msg'=>'failed sql.php')));
+      die();
         break;
 
 }
