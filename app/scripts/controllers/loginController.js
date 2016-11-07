@@ -8,7 +8,7 @@
  * Controller of the paintfusionApp
  */
 angular.module('paintfusionApp')
-  .controller('LoginCtrl', function ($state, $scope, sqlService, apiService) {
+  .controller('LoginCtrl', function ($state, $scope, $location, $cookies, sqlService, apiService) {
     $scope.tabActive = 'login';
     $scope.showMail = false;
     $scope.pwdReco = function() {
@@ -43,26 +43,23 @@ angular.module('paintfusionApp')
     };
 
   $scope.loginSubmit = function() {
-console.log($scope.loginForm);
-    // si loginForm est valide
+    //console.log($scope.loginForm);
 
     sqlService.login($scope.loginForm.ids.pseudo,$scope.loginForm.ids.server,$scope.loginForm.password).then(function(userData) {
       console.log('UserData');
       console.log(userData);
-      if(userData.code == 1){
         console.log('well logged');
         $location.path('/profile');
-      }
-    });
+      },function (reason){console.log(reason);});
 
   };
 
-
-
-$scope.signupSubmit = function () {
+  $scope.signupSubmit = function () {
   apiService.isRunesPagesOk($scope.signupForm.ids.pseudo,$scope.signupForm.ids.server).then(function(){
-    console.log('Your rune page is ok');
-      sqlService.signup($scope.signupForm.ids.pseudo,$scope.signupForm.ids.server,$scope.signupForm.password,$scope.signupForm.mail).then(function(greet) {console.log(greet.msg)},function(reason){console.log(reason.msg);});
+      sqlService.signup($scope.signupForm.ids.pseudo,$scope.signupForm.ids.server,$scope.signupForm.password,$scope.signupForm.mail).then(
+        function(greet) {$location.path('/profile');},
+        function(reason){console.log(reason);}
+      );
   },function(reason){
     console.log(reason);
   });

@@ -76,8 +76,11 @@ switch (check_action()){
       die();
     }
     $response = execute_request($url);
-    $response = json_encode($response->{$summonerId});
-    echo ('{"profil":'.$response.',"msg":"ok","code":0}');
+    if($response){
+      $response = json_encode($response->{$summonerId});
+      echo ('{"profil":'.$response.',"msg":"ok","code":0}');
+    }else
+      echo ('{"msg":"Unable to reach the api","code":2}');
     break;
   case "getProfileByPseudo":
     $pseudo = check_pseudo();
@@ -91,8 +94,12 @@ switch (check_action()){
       die();
     }
     $response = execute_request($url);
-    $response = json_encode($response->{$pseudo});
-    echo ('{"profil":'.$response.',"msg":"ok","code":0}');
+
+    if($response){
+      $response = json_encode($response->{$pseudo});
+      echo ('{"profil":'.$response.',"msg":"ok","code":0}');
+    }else
+      echo ('{"msg":"Unable to reach the api","code":2}');
 
     break;
   case "getRunesPages":
@@ -107,8 +114,11 @@ switch (check_action()){
       die();
     }
     $response = execute_request($url);
-    $response = json_encode($response->{$summonerId}->{"pages"});
-    echo ('{"pages":'.$response.',"msg":"ok","code":0}');
+    if($response){
+      $response = json_encode($response->{$summonerId}->{"pages"});
+      echo ('{"pages":'.$response.',"msg":"ok","code":0}');
+    }else
+      echo ('{"msg":"Unable to reach the api","code":2}');
 
     break;
   default:

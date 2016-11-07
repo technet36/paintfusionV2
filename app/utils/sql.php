@@ -217,25 +217,28 @@ switch (check_action()){
     $password= check_password();
     if ($server && $pseudo && $password){
       $password= encrypt_password($password);
-      $sql = "SELECT `id_user`,`mat_gen`,`status`,`summonerId`,`privacy_lvl` FROM `user_t` WHERE `pseudo`='$pseudo' AND `server`= '$server' AND `password`='$password'";
+      $user = $bdd->prepare ("SELECT `id_user`,`mat_gen`,`status`,`summonerId`,`privacy_lvl` FROM `user_t` WHERE `pseudo`=:pseudo AND `server`= :server AND `password`=:password");
+      $user->bindParam(':server',$server);
+      $user->bindParam(':pseudo',$pseudo);
+      $user->bindParam(':password',$password);
     }
     else {
       //header("location: ../error.php?error=".$e->getMessage());
-      echo (json_encode(array('code'=>0,'msg'=>'invalid values. pseudo, password and server are needed')));
+      echo (json_encode(array('code'=>1,'msg'=>'invalid values. pseudo, password and server are needed')));
       die();
     }
+    $user->execute();
+    $profil= $user->fetch();
 
-        $res = $bdd->query($sql);
-        $user= $res-> fetch();
 
-    if ($user){
+    if ($profil){
       echo (json_encode(array(
-          'code'=> 1,
+          'code'=> 0,
           'msg'=> 'login done',
-          'matrix'=>$user['mat_gen'],
-          'status'=>$user['status'],
-          'sumId'=>$user['summonerId'],
-          'privacyLvl'=>$user['privacy_lvl']
+          'matrix'=>$profil['mat_gen'],
+          'status'=>$profil['status'],
+          'sumId'=>$profil['summonerId'],
+          'privacyLvl'=>$profil['privacy_lvl']
         )
       ));
     }
@@ -274,8 +277,11 @@ switch (check_action()){
     $bdd->beginTransaction();
     $userExist->execute();
     $user = $userExist->fetch();
+    if(!$user){
+      echo (json_encode(array('code'=>2,'msg'=>'Unable to reach the bdd')));
+      die();
+    }
     $nbUser = $user['exist'];
-    print_r( $user);
     if (!$nbUser){
       $insert->execute();
       echo (json_encode(array('code'=>0,'msg'=>'Registration done')));
@@ -287,8 +293,7 @@ switch (check_action()){
 
 
    // $response = $bdd->query($sql);
-
-break;
+  break;
 
     //break;//To register
   case "userExist":
@@ -307,7 +312,10 @@ break;
       die();
     }
     $res = $bdd->query($sql);
-
+    if(!$res){
+      echo (json_encode(array('code'=>2,'msg'=>'Unable to reach the bdd')));
+      die();
+    }
     $response= $res-> fetch();
     if (isset($response['exist']) && $response['exist']==1)
       echo (json_encode(array('code'=>1,'msg'=>'the user exist')));
