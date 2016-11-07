@@ -10,5 +10,6 @@
  */
 angular
   .module('paintfusionApp', [
-    'ui.router'
+    'ui.router',
+    'ngCookies'
   ]);
