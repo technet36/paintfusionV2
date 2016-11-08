@@ -21,6 +21,20 @@ angular.module('paintfusionApp')
     });
   };
 
+    this.getLeague = function (summonerId,server){
+      var deferred = $q.defer();
+      return $http.get("http://localhost/paintfusion/app/utils/api.php?action=getLeague&server="+server+"&summonerId="+summonerId).then(function (data){
+        data.data.code?deferred.reject(data.data):deferred.resolve(data.data);
+        return deferred.promise;
+      });
+    };
+    this.getHistorique = function (summonerId,server){
+      var deferred = $q.defer();
+      return $http.get("http://localhost/paintfusion/app/utils/api.php?action=getHistorique&server="+server+"&summonerId="+summonerId).then(function (data){
+        data.data.code?deferred.reject(data.data):deferred.resolve(data.data);
+        return deferred.promise;
+      });
+    };
   this.getProfileByPseudo= function (pseudo, server){
     var deferred = $q.defer();
     return $http.get("http://localhost/paintfusion/app/utils/api.php?action=getProfileByPseudo&server="+server+"&pseudo="+pseudo).then(function (data){

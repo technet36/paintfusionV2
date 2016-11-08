@@ -38,7 +38,7 @@ function check_server(){
 };
 function check_action(){
   $action= $_GET['action'];
-  return ( check_SQL($action) && preg_match('/getRunesPages|getProfile|getProfileByPseudo/',$action)) ? $action: false;
+  return ( check_SQL($action) && preg_match('/getRunesPages|getProfile|getProfileByPseudo|getLeague|getHistorique/',$action)) ? $action: false;
 };
 function check_idMatch () {
   $idMatch = $_GET['idMatch'];
@@ -121,6 +121,42 @@ switch (check_action()){
       echo ('{"msg":"Unable to reach the api","code":2}');
 
     break;
+  case "getLeague":
+    $summonerId = check_summonerId();
+    $server = check_server();
+    if ($server && $summonerId ){
+      $url="https://".$server.".api.pvp.net/api/lol/euw/v2.5/league/by-summoner/".$summonerId."/entry?api_key=".$api_key;
+    }
+    else {
+      echo (json_encode(array('code'=>0,'msg'=>'invalid values. summonerId and server are needed')));
+      die();
+    }
+    $response = execute_request($url);
+    if($response){
+      $response = json_encode($response->{$summonerId}[0]);
+      //echo($response);
+      echo ('{"stats":'.$response.',"msg":"ok","code":0}');
+    }else
+      echo ('{"msg":"Unable to reach the api","code":2}');
+        break;
+  case "getHistorique":
+    $summonerId = check_summonerId();
+    $server = check_server();
+    if ($server && $summonerId ){
+      $url="https://".$server.".api.pvp.net/api/lol/euw/v1.3/game/by-summoner/".$summonerId."/recent?api_key=".$api_key;
+    }
+    else {
+      echo (json_encode(array('code'=>0,'msg'=>'invalid values. summonerId and server are needed')));
+      die();
+    }
+    $response = execute_request($url);
+    if($response){
+      $response = json_encode($response);
+      //echo($response);
+      echo ('{"stats":'.$response.',"msg":"ok","code":0}');
+    }else
+      echo ('{"msg":"Unable to reach the api","code":2}');
+        break;
   default:
     //header("location: ../error.php?error=".$e->getMessage());
     echo (json_encode(array('code'=>0,'msg'=>'failed api.php','action'=>check_action())));

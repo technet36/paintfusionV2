@@ -14,7 +14,7 @@ angular.module('paintfusionApp')
     $stateProvider
 
       .state('dashboard',{
-        url:'/dashboard',
+        url:'/dashboard/:server/:pseudo',
         title: 'Paintfusion: dashboard',
         templateUrl: 'views/main.html',
         controller: 'MainCtrl'

@@ -1,23 +1,51 @@
-<div class="jumbotron">
-  <h1>'Allo, 'Allo!</h1>
-  <p class="lead">
-    <img src="images/yeoman.png" alt="I'm Yeoman"><br>
-    Always a pleasure scaffolding your apps.
-  </p>
-  <p><a class="btn btn-lg btn-success" ng-href="#/">Splendid!<span class="glyphicon glyphicon-ok"></span></a></p>
-</div>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-xs-5">
+      <div class="peuso">{{profil.pseudo}}</div>
+      <div class="level">Serveur : {{profil.server}}</div>
+      <div class="level">Level : {{profil.lvl}}</div>
+      <div class="rank">{{profil.tier}} {{profil.division}}</div>
+      <div class="lp">LP :{{profil.LP}}</div>
+      <br>
+      <div class="icon"></div>
+      <img ng-src="http://ddragon.leagueoflegends.com/cdn/6.22.1/img/profileicon/{{profil.icon}}.png" class="img-responsive">
 
-<div class="row marketing">
-  <h4>HTML5 Boilerplate</h4>
-  <p>
-    HTML5 Boilerplate is a professional front-end template for building fast, robust, and adaptable web apps or sites.
-  </p>
+      <div id="container" style="min-width: 310px; max-width: 600px; height: 400px; margin: 0 auto;"></div>
+    </div>
+    <div class="col-xs-5 col-xs-offset-1">
+      Historic
+      <table class="table table-hover">
+        <tr>
+          <th>Champ</th>
+          <th>Count</th>
+          <th>Items</th>
+          <th>KDA</th>
+        </tr>
+        <tr ng-repeat="game in games" ng-class="game.stats.win?'bg-success':'bg-danger'">
+          <td>
+            <img src="http://ddragon.leagueoflegends.com/cdn/6.21.1/img/champion/{{champion(game.championId)}}.png" class="img-responsive">
 
-  <h4>Angular</h4>
-  <p>
-    AngularJS is a toolset for building the framework most suited to your application development.
-  </p>
+            <img src="http://ddragon.leagueoflegends.com/cdn/6.21.1/img/spell/Summoner{{summonerSpell(game.spell1)}}.png" class="img-responsive">
+            <img src="http://ddragon.leagueoflegends.com/cdn/6.21.1/img/spell/Summoner{{summonerSpell(game.spell2)}}.png" class="img-responsive">
+          </td>
+          <td>
+            <div>gold:{{game.stats.goldEarned}}</div>
+            <div>cs:{{game.stats.minionsKilled}}</div>
+            <div>min:{{game.stats.timePlayed/60}}</div>
+            <div>Type:{{game.subType}}</div>
+          </td>
+          <td></td>
+          <td>
+            <div>{{game.stats.championsKilled}}/{{game.stats.numDeaths}}/{{game.stats.assists}}</div>
+          </td>
+        </tr>
+      </table>
+    </div>
+    <div class="col-xs-1"></div>
+  </div>
+  <div class="row">
 
-  <h4>Karma</h4>
-  <p>Spectacular Test Runner for JavaScript.</p>
+  </div>
+
+
 </div>

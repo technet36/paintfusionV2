@@ -8,7 +8,7 @@
  * service of the paintfusionApp
  */
 angular.module('paintfusionApp')
-  .service('sqlService',function($http,$q,$cookies, apiService) {
+  .service('sqlService',function($http,$q,autreService, apiService) {
 var that = this;
     this.signup = function(pseudo, server, pass, mail) {
       var deferred = $q.defer();
@@ -39,8 +39,16 @@ var that = this;
         if(data.data.code)
           deferred.reject(data.data);
         else{
+          var cookie = {
+            'pseudo':pseudo,
+            'matrix':data.data.matrix,
+            'sumId':data.data.sumId,
+            'privacyLvl':data.data.privacyLvl,
+            'server':server,
+            'status':data.data.status
+          };
           deferred.resolve(data.data);
-          $cookies.put('me',data.data);
+          autreService.putMe(cookie);
         }
 
         return deferred.promise;

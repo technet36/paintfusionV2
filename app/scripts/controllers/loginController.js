@@ -8,7 +8,7 @@
  * Controller of the paintfusionApp
  */
 angular.module('paintfusionApp')
-  .controller('LoginCtrl', function ($state, $scope, $location, $cookies, sqlService, apiService) {
+  .controller('LoginCtrl', function ($state, $scope, $location, autreService, sqlService, apiService) {
     $scope.tabActive = 'login';
     $scope.showMail = false;
     $scope.pwdReco = function() {
@@ -46,10 +46,8 @@ angular.module('paintfusionApp')
     //console.log($scope.loginForm);
 
     sqlService.login($scope.loginForm.ids.pseudo,$scope.loginForm.ids.server,$scope.loginForm.password).then(function(userData) {
-      console.log('UserData');
-      console.log(userData);
-        console.log('well logged');
-        $location.path('/profile');
+        console.log(autreService.getMe().server);
+        $location.path('/dashboard/'+autreService.getMe().server+'/'+autreService.getMe().pseudo);
       },function (reason){console.log(reason);});
 
   };
