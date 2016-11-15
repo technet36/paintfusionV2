@@ -31,8 +31,8 @@
           <div class="collapse navbar-collapse" id="js-navbar-collapse">
 
             <ul class="nav navbar-nav">
-              <li class="active"><a  ui-sref="login">login</a></li>
-              <li><a ng-href="#/">About</a></li>
+              <li><a  ui-sref="login">login</a></li>
+              <li><a ui-sref="tournamentCreator">Create tournament</a></li>
               <li><a ng-href="#/">Contact</a></li>
             </ul>
           </div>
@@ -99,7 +99,8 @@
     <script src="bower_components/lodash/lodash.js"></script>
     <script src="bower_components/angular-cookies/angular-cookies.js"></script>
     <script src="bower_components/highcharts/highcharts.js"></script>
-    <script src="/bower_components/highcharts/highcharts-more.js"></script>
+    <script src="bower_components/highcharts/highcharts-more.js"></script>
+    <script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
     <!-- endbower -->
     <!-- endbuild -->
 
@@ -114,6 +115,8 @@
 
     <script src="scripts/controllers/mainController.js"></script>
     <script src="scripts/controllers/loginController.js"></script>
+    <script src="scripts/controllers/tournamentCreatorController.js"></script>
+    <script src="scripts/controllers/historyController.js"></script>
     <!-- endbuild -->
 </body>
 </html>

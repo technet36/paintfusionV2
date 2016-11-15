@@ -1,0 +1,31 @@
+<div class="container-fluid">
+  <table class="table table-hover">
+    <p>test</p>
+    <p>{{server}}</p>
+    <p>{{sumId}}</p>
+    <tr>
+      <th>Champ</th>
+      <th>Count</th>
+      <th>Items</th>
+      <th>KDA</th>
+    </tr>
+    <tr ng-repeat="game in games" ng-class="game.stats.win?'bg-success':'bg-danger'">
+      <td>
+        <img src="http://ddragon.leagueoflegends.com/cdn/6.21.1/img/champion/{{champion(game.championId)}}.png" class="img-responsive">
+
+        <img src="http://ddragon.leagueoflegends.com/cdn/6.21.1/img/spell/Summoner{{summonerSpell(game.spell1)}}.png" class="img-responsive">
+        <img src="http://ddragon.leagueoflegends.com/cdn/6.21.1/img/spell/Summoner{{summonerSpell(game.spell2)}}.png" class="img-responsive">
+      </td>
+      <td>
+        <div>gold:{{game.stats.goldEarned}}</div>
+        <div>cs:{{game.stats.minionsKilled}}</div>
+        <div>min:{{game.stats.timePlayed/60}}</div>
+        <div>Type:{{game.subType}}</div>
+      </td>
+      <td></td>
+      <td>
+        <div>{{game.stats.championsKilled}}/{{game.stats.numDeaths}}/{{game.stats.assists}}</div>
+      </td>
+    </tr>
+  </table>
+</div>

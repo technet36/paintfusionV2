@@ -1,0 +1,65 @@
+<div class="container-fluid">
+  {{greet}}
+  <form class="form-horizontal">
+    <div class="form-group">
+      <label for="name"> Tournament name</label>
+      <input type="text" class="form-control" id="name" ng-model="form.name" placeholder="Name of the tournament">
+    </div><!--name-->
+    <div class="form-group">
+      <label> Tournament type</label>
+      <div  class="form-group">
+        <input  type="radio" name ="type" value="0" id="knockout" >
+        <label for="knockout">
+        knockout
+        <img src="../images/knockout.jpg" height="75" width="100">
+      </label>
+      </div>
+      <div class="form-group">
+        <input  type="radio" name ="type" value="1" id="knockoutLB">
+        <label for="knockoutLB">
+        knockout+looser bracket
+        <img src="../images/knockout.jpg" height="75" width="100">
+      </label>
+      </div>
+      <div class="form-group">
+        <input  type="radio" name ="type" value="3" id="GSknockout">
+        <label for="GSknockout">
+        Group stage+knockout
+        <img src="../images/knockout.jpg" height="75" width="100">
+      </label>
+      </div>
+    </div><!--type-->
+    <div class="form-group">
+      <label for="maxPlayer">Number max of players</label>
+      <input type="number" class="form-control" id="maxPlayer" ng-model="form.maxPlayer" min="4">
+    </div><!--max player-->
+    <div class="form-group">
+      <label for="map"> Tournament map</label>
+      <select class="form-control" id="map" name="map" ng-model="form.map">
+        <option value="SUMMONERS_RIFT" selected>Summoners rift</option>
+        <option value="TWISTED_TREELINE">Twisted treeline</option>
+        <option value="HOWLING_ABYSS">Howling abyss</option>
+      </select>
+    </div><!--map-->
+    <div class="form-group">
+      <label for="date"> Tournament date</label>
+      <input type="text" class="form-control" uib-datepicker-popup="{{format}}" id="date" ng-model="form.date">
+    </div><!--date-->
+    <div class="form-group">
+      <p class="input-group">
+        <input type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="dt" is-open="popup1.opened" ng-required="true" close-text="Close" alt-input-formats="altInputFormats" />
+          <span class="input-group-btn">
+            <button type="button" class="btn btn-default" ng-click="open1()"><i class="glyphicon glyphicon-calendar"></i></button>
+          </span>
+      </p>
+    </div>
+    <div class="form-group">
+      <label for="registrationMaxDate"> Tournament limit date for player registration</label>
+      <input type="date" class="form-control" id="registrationMaxDate" ng-model="form.maxDate" >
+    </div><!--date max registration-->
+    <div class="form-group">
+      <label for="note"> Description</label>
+      <textarea class="form-control" id="note" ng-model="form.note" placeholder="Describe your tournament">
+    </div><!--note-->
+  </form>
+</div>

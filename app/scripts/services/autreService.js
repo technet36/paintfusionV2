@@ -13,6 +13,15 @@ angular.module('paintfusionApp')
       'domain':'localhost'
     };
     this.getMe = function (){
+      //ex:
+      //          var cookie = {
+      //'pseudo':,
+      //'matrix':,
+      //'sumId':,
+      //'privacyLvl':,
+//      'server':,
+//      'status':
+//    };
       return $cookies.getObject('me');
     };
     this.putMe = function (me){

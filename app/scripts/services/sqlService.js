@@ -58,5 +58,16 @@ var that = this;
           });
     };
 
+    this.createTournament = function (name, host, privacy_lvl, type, max_player, map, date, registration_max_date, note) {
+      var deferred = $q.defer();
+      return $http.get("http://localhost:80/paintfusion/app/utils/sql.php?action=createTournament&tournamentName="+name+"&privacyLvl="+privacy_lvl+"&host="+host+"&tournamentType="+type+"&maxPlayer="+max_player+"&map="+map+"&date="+date+"&registrationMaxDate="+registration_max_date+"&note="+note).then(function(data){
+        data.data.code?deferred.reject(data.data):deferred.resolve(data.data);
+        return deferred.promise;
+      },function(reason){
+        deferred.reject(reason);
+        return deferred.promise;
+      });
+    };
+
 
   });

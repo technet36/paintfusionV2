@@ -10,10 +10,10 @@
 angular.module('paintfusionApp')
   .controller('MainCtrl', function ($scope, $state, $stateParams,autreService, $location, apiService) {
     var me = autreService.getMe();
-    if(!me)$location.path('/login');//if not loggued, redirect to the login page
+    if(!(me || ($stateParams.pseudo && $stateParams.server) ) )$location.path('/login');//if not loggued, redirect to the login page
     $scope.profil = {
-      'pseudo':$stateParams.pseudo,
-      'server':$stateParams.server,
+      'pseudo':$stateParams.pseudo?$stateParams.pseudo:me.pseudo,
+      'server':$stateParams.server?$stateParams.server:me.server,
       'lvl':0,
       'sumId':0,
       'tier':'',
@@ -21,6 +21,7 @@ angular.module('paintfusionApp')
       'LP':0,
       'icon':0
     };
+
     apiService.getProfileByPseudo($scope.profil.pseudo,$scope.profil.server).then(function(data){
       _.set($scope.profil,'sumId',data.profil.id);
       _.set($scope.profil,'lvl',data.profil.summonerLevel);
@@ -32,19 +33,10 @@ angular.module('paintfusionApp')
         console.log($scope.profil);
       },function(reason){console.log(reason);});
 
-      apiService.getHistorique($scope.profil.sumId,$scope.profil.server).then(function(hist){
-        console.log(hist.stats.games);
-        $scope.games = hist.stats.games;
-      });
+
     },function(reason){console.log(reason);});
 
 
-    $scope.summonerSpell = function (id){
-      return autreService.resolveSummonerSpell(id);
-    };
-    $scope.champion = function (id){
-      return autreService.resolveChampion(id);
-    };
       Highcharts.chart('container', {
 
         chart: {

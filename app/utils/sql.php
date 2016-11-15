@@ -3,8 +3,8 @@
 header('Access-Control-Allow-Origin: http://localhost:9000');
 header('Content-Type: application/json');
 $BDD_host="localhost";
-$BDD_user="root";
-$BDD_password="admin";
+$BDD_user=isset($_SESSION["status"]) ? $_SESSION["credential"] :"player";
+$BDD_password= isset($_SESSION["status"]) ? $_SESSION["pass"] : "XFcH4MFdJYhrp47R";
 $BDD_base="paintfusion";
 $sql=false;
 try {
@@ -97,12 +97,13 @@ function check_maxPlayer() {
 function check_map () {
   $map = $_GET['map'];
   //The pattern is "SUMMONERS_RIFT or TWISTED_TREELINE or HOWLING_ABYSS
-  if ( check_SQL($map) && preg_match('/SUMMONERS_RIFT|TWISTED_TREELINE|HOWLING_ABYSS/',$map ))
+  if ( check_SQL($map) && preg_match('/SUMMONERS RIFT|TWISTED TREELINE|HOWLING ABYSS/',$map ))
     return true;
   else return false;
 };
 function check_date() {
-$date = $_GET['date'];//need a timestamp
+$date = $_GET['date'];
+//need a timestamp
   return (date($date)) ? $date : false;
 };
 function check_registrationMaxDate() {
@@ -143,7 +144,8 @@ function check_summonerId() {
 };
 function check_email(){
 
-$mail = $_GET['mail'];//the pattern is "any letter or number followed by @ followed by any letter or number
+$mail = $_GET['mail'];
+//the pattern is "any letter or number followed by @ followed by any letter or number
 //followed by . followed by 2-4 letters and maybe another . (for tlds like co.uk)
 
   if ( check_SQL($mail) && preg_match('/^[A-z0-9_\-]+[@][A-z0-9_\-]+([.][A-z0-9_\-]+)+[A-z.]{2,4}$/', $mail))
@@ -152,7 +154,7 @@ $mail = $_GET['mail'];//the pattern is "any letter or number followed by @ follo
 };
 function check_action(){
   $action= $_GET['action'];
-  return ( preg_match('/login|signup|userExist|userProfile/',$action)) ? $action: false;
+  return ( preg_match('/login|signup|userExist|userProfile|createTournament/',$action)) ? $action: false;
 };
 //########################
 function encrypt_password ($pass) {
@@ -232,6 +234,9 @@ switch (check_action()){
 
 
     if ($profil){
+      session_start();
+      $_SESSION['credential'] = "player";
+      $_SESSION['pass'] = "XFcH4MFdJYhrp47R";
       echo (json_encode(array(
           'code'=> 0,
           'msg'=> 'login done',
@@ -347,9 +352,44 @@ switch (check_action()){
       echo (json_encode(array('code'=>0,'msg'=>'no account for this user (or several)')));
     break;
         break;
+
+  case "createTournament":
+    $tournamentName = check_tournamentName();//
+    $state = 1;
+    $host = check_host();//
+    $privacyLvl = check_privacyLvl();//
+    $tournamentType = check_tournamentType();
+    $maxPlayer = check_maxPlayer();
+    $map = check_map();//
+    $date = check_date();//
+    $registrationMaxDate = check_registrationMaxDate();//
+    $note = check_note();
+// date forme ex : 2016-11-15 00:00:00
+    if ($tournamentName && $host && $map && $date && $registrationMaxDate){
+      $insertTournament = $bdd->prepare("
+INSERT INTO tournament_t (`tournament_name`, `state`, `host`, `privacy_lvl`, `tournament_type`, `max_player`, `map`, `date`, `registration _max_date`, `note`)
+ VALUES (:tournamentName, :state, :host, :privacyLvl, :tournamentType, :maxPlayer, :map, :date, :registrationMaxDate, :note)");
+      $insertTournament->bindParam(":tournamentName",$tournamentName);
+      $insertTournament->bindParam(":state",$state);
+      $insertTournament->bindParam(":host",$host);
+      $insertTournament->bindParam(":privacyLvl",$privacyLvl);
+      $insertTournament->bindParam(":tournamentType",$tournamentType);
+      $insertTournament->bindParam(":maxPlayer",$maxPlayer);
+      $insertTournament->bindParam(":map",$map);
+      $insertTournament->bindParam(":date",$date);
+      $insertTournament->bindParam(":registrationMaxDate",$registrationMaxDate);
+      $insertTournament->bindParam(":note",$note);
+    }
+    else {
+      echo (json_encode(array('code'=>1,'msg'=>'invalid values. tournamentName, host, map, date and registrationMaxDate are needed','name'=>$tournamentName,'host'=>$host,'map'=>$map,'date'=>$date,'maxDate'=>$registrationMaxDate)));
+      die();
+    }
+    $insertTournament->execute();
+    echo (json_encode(array('code'=>0,'msg'=>'Registration done')));
+        break;
     default:
       //header("location: ../error.php?error=".$e->getMessage());
-      echo (json_encode(array('code'=>0,'msg'=>'failed sql.php')));
+      echo (json_encode(array('code'=>1,'msg'=>'failed sql.php','action'=>check_action())));
       die();
         break;
 
