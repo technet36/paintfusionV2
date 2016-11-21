@@ -9,7 +9,7 @@ angular.module('paintfusionApp')
     if ($scope.sumId && $scope.server){
       apiService.getHistorique($scope.sumId,$scope.server).then(function(hist){
         $scope.games = hist.stats.games;
-      });
+      },function(reason){console.log(reason);});
     $scope.isHistoryAvailable = 1;
     }
   };

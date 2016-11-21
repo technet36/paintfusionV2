@@ -38,7 +38,7 @@ function check_server(){
 };
 function check_action(){
   $action= $_GET['action'];
-  return ( check_SQL($action) && preg_match('/getRunesPages|getProfile|getProfileByPseudo|getLeague|getHistorique/',$action)) ? $action: false;
+  return ( check_SQL($action) && preg_match('/getRunesPages|getStats|getProfile|getProfileByPseudo|getLeague|getHistorique/',$action)) ? $action: false;
 };
 function check_idMatch () {
   $idMatch = $_GET['idMatch'];
@@ -62,6 +62,9 @@ function check_summonerId() {
   $summonerId = $_GET['summonerId'];
   return ( check_SQL($summonerId) && preg_match('/\d+/',$summonerId)) ? $summonerId : false;
 };
+
+function check_apiResponseCode(){};//TODO
+
 
 // Complétez $url avec l'url cible (l'url de la page que vous voulez télécharger)
 switch (check_action()){
@@ -146,7 +149,7 @@ switch (check_action()){
       $url="https://".$server.".api.pvp.net/api/lol/euw/v1.3/game/by-summoner/".$summonerId."/recent?api_key=".$api_key;
     }
     else {
-      echo (json_encode(array('code'=>0,'msg'=>'invalid values. summonerId and server are needed')));
+      echo (json_encode(array('code'=>1,'msg'=>'invalid values. summonerId and server are needed')));
       die();
     }
     $response = execute_request($url);
@@ -157,6 +160,24 @@ switch (check_action()){
     }else
       echo ('{"msg":"Unable to reach the api","code":2}');
         break;
+  case "getStats":
+    $idMatch = check_idMatch();
+    $server = check_server();
+    if ($server && $idMatch ){
+      $url="https://".$server.".api.pvp.net/api/lol/euw/v2.2/match/".$idMatch."?api_key=".$api_key;
+    }
+    else {
+      echo (json_encode(array('code'=>1,'msg'=>'invalid values. idMatch and server are needed')));
+      die();
+    }
+    $response = execute_request($url);
+    if($response){
+      $response = json_encode($response);
+      //echo($response);
+      echo ('{"stats":'.$response.',"msg":"ok","code":0}');
+    }else
+      echo ('{"msg":"Unable to reach the api","code":2}');
+    break;
   default:
     //header("location: ../error.php?error=".$e->getMessage());
     echo (json_encode(array('code'=>0,'msg'=>'failed api.php','action'=>check_action())));

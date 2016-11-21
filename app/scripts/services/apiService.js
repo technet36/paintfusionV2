@@ -49,6 +49,13 @@ angular.module('paintfusionApp')
       return deferred.promise;
     });
   };
+    this.getStats = function(matchId, server){
+      var deferred = $q.defer();
+      return $http.get("http://localhost/paintfusion/app/utils/api.php?action=getStats&server="+server+"&idMatch="+matchId).then(function (data){
+        data.data.code?deferred.reject(data.data):deferred.resolve(data.data);
+        return deferred.promise;
+      });
+    };
 //##############################
 
   this.isRunesPagesOk = function (pseudo, server) {

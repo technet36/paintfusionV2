@@ -19,6 +19,17 @@ angular.module('paintfusionApp')
       templateUrl:'views/partials/historyDirective.html'
     }
   })
+  .directive('matrix', function() {
+    return {
+      restrict: 'E',
+      scope: {
+        sumId: '=sumId',
+        server: '=server'
+      },
+      controller:'MatrixCtrl',
+      templateUrl:'views/partials/matrixDirective.html'
+    }
+  })
   .config(function ($stateProvider, $urlRouterProvider) {
     $urlRouterProvider.otherwise('/dashboard');
 
