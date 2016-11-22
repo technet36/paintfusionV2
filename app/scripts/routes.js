@@ -24,6 +24,7 @@ angular.module('paintfusionApp')
       restrict: 'E',
       scope: {
         sumId: '=sumId',
+        gameId: '=gameId',
         server: '=server'
       },
       controller:'MatrixCtrl',

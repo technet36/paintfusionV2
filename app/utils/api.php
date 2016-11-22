@@ -29,7 +29,7 @@ function check_SQL ($param) {  //uncomplete
   //return ( check_SQL($param) && preg_match('/((\%3D)|(=))[^\n]*((\%27)|(\')|(\-\-)|(\%3B)|(;))/i' ,$param)) ? $param : false;
 };  //uncomplete
 function check_pseudo(){
-  $pseudo = $_GET['pseudo'];
+  $pseudo = strtolower($_GET['pseudo']);
   return ( check_SQL($pseudo) && preg_match('/.{3,255}/',$pseudo)) ? $pseudo : false;
 };  //uncomplete
 function check_server(){

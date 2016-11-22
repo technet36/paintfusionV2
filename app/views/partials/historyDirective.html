@@ -1,30 +1,39 @@
 <div class="container-fluid" ng-if="isHistoryAvailable">
-  <table class="table table-hover">
-    <tr>
-      <th>Champ</th>
-      <th>Count</th>
-      <th>Items</th>
-      <th>KDA</th>
-    </tr>
-    <tr ng-repeat="game in games" ng-class="game.stats.win?'bg-success':'bg-danger'">
-      <td>
+    <div class="row">
+      <div class="col-xs-3">Champ</div>
+      <div class="col-xs-3">Count</div>
+      <div class="col-xs-3">Items</div>
+      <div class="col-xs-3">KDA</div>
+    </div>
+    <div class="row" ng-repeat="game in games" ng-class="game.stats.win?'bg-success':'bg-danger'">
+      <div class="row">
+        <div class="col-xs-3">
         <img src="http://ddragon.leagueoflegends.com/cdn/6.21.1/img/champion/{{champion(game.championId)}}.png" class="img-responsive">
 
         <img src="http://ddragon.leagueoflegends.com/cdn/6.21.1/img/spell/Summoner{{summonerSpell(game.spell1)}}.png" class="img-responsive">
         <img src="http://ddragon.leagueoflegends.com/cdn/6.21.1/img/spell/Summoner{{summonerSpell(game.spell2)}}.png" class="img-responsive">
-      </td>
-      <td>
+      </div>
+        <div class="col-xs-3">
         <div>gold:{{game.stats.goldEarned}}</div>
         <div>cs:{{game.stats.minionsKilled}}</div>
         <div>min:{{game.stats.timePlayed/60}}</div>
         <div>Type:{{game.subType}}</div>
-      </td>
-      <td></td>
-      <td>
-        <div>{{game.stats.championsKilled}}/{{game.stats.numDeaths}}/{{game.stats.assists}}</div>
-      </td>
-    </tr>
-  </table>
+        <div>gameId:{{game.gameId}}</div>
+      </div>
+        <div class="col-xs-3">
+        hydra
+      </div>
+        <div class="col-xs-3">
+          <div>{{game.stats.championsKilled}}/{{game.stats.numDeaths}}/{{game.stats.assists}}</div>
+        </div>
+      </div>
+      <div ng-if="isRanked(game.subType)" class="row">
+        <button ng-click="showChart(game.gameId)" class="btn btn-default btn-lg btn-block" >
+          <i class="fa fa-bar-chart"></i>
+        </button>
+        <matrix ng-if="showChartP==game.gameId" game-id="game.gameId" sum-id="sumId" server="server"></matrix>
+      </div>
+    </div>
 </div>
 <div class="container-fluid" ng-if="!isHistoryAvailable">
   <button type="button" class="btn btn-default btn-lg btn-block" ng-click="historyRequired()">click here to see the history</button>
