@@ -43,23 +43,26 @@
     </div><!--map-->
     <div class="form-group">
       <label for="date"> Tournament date</label>
-      <input type="text" class="form-control" uib-datepicker-popup="{{format}}" id="date" ng-model="form.date">
-    </div><!--date-->
-    <div class="form-group">
-      <p class="input-group">
+      <p class="input-group" id="date">
         <input type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="dt" is-open="popup1.opened" ng-required="true" close-text="Close" alt-input-formats="altInputFormats" />
           <span class="input-group-btn">
             <button type="button" class="btn btn-default" ng-click="open1()"><i class="glyphicon glyphicon-calendar"></i></button>
           </span>
       </p>
-    </div>
+    </div><!--date-->
     <div class="form-group">
       <label for="registrationMaxDate"> Tournament limit date for player registration</label>
-      <input type="date" class="form-control" id="registrationMaxDate" ng-model="form.maxDate" >
+      <p class="input-group" id="registrationMaxDate">
+      <input type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="dt" is-open="popup1.opened" ng-required="true" close-text="Close" alt-input-formats="altInputFormats" />
+        <span class="input-group-btn">
+          <button type="button" class="btn btn-default" ng-click="open1()"><i class="glyphicon glyphicon-calendar"></i></button>
+        </span>
+    </p>
     </div><!--date max registration-->
     <div class="form-group">
       <label for="note"> Description</label>
-      <textarea class="form-control" id="note" ng-model="form.note" placeholder="Describe your tournament">
+      <textarea class="form-control" id="note" ng-model="form.note" placeholder="Describe your tournament"></textarea>
     </div><!--note-->
+    <button type="submit" class=" btn btn-primary">Submit</button>
   </form>
 </div>
