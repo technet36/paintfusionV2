@@ -32,9 +32,9 @@ angular.module('paintfusionApp')
         _.set($scope.profil,'tier',data.stats.tier);
         _.set($scope.profil,'division',data.stats.entries[0].division);
         _.set($scope.profil,'LP',data.stats.entries[0].leaguePoints);
-        $scope.profilOk = 1;
       },function(reason){console.log(reason);});
 
+      $scope.profilOk = 1;
     },function(reason){console.log(reason);});
 
     var matrix =[

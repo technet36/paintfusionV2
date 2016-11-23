@@ -20,7 +20,18 @@ angular.module('paintfusionApp')
         'totDamageTaken20to30':0,
         'totDamageTaken30':0,
         'totHeal':0,
-        'totCc':0
+        'totCc':0,
+        'teamMatrix.maxGold0to10':0,
+        'teamMatrix.maxGold10to20':0,
+        'teamMatrix.maxGold20to30':0,
+        'teamMatrix.maxGold30':0
+    };
+      var enemyWard = 0;
+      var maxGold = {
+        'zeroToTen':0,
+        'tenToTwenty':0,
+        'twentyToThirty':0,
+        'thirtyToEnd':0
       };
       hisTeam.forEach(function(teammate) {
         teamMatrix.nbKill += teammate.stats.kills;
@@ -34,39 +45,45 @@ angular.module('paintfusionApp')
         teamMatrix.totDamageTaken30 += teammate.timeline.damageTakenPerMinDeltas.thirtyToEnd;
         teamMatrix.totHeal += teammate.stats.totalHeal;
         teamMatrix.totCc += teammate.stats.totalTimeCrowdControlDealt;
+
+        maxGold.zeroToTen = (teammate.timeline.damageTakenPerMinDeltas.zeroToTen>maxGold.zeroToTen)?teammate.timeline.damageTakenPerMinDeltas.zeroToTen:maxGold.zeroToTen;
+        maxGold.tenToTwenty = (teammate.timeline.damageTakenPerMinDeltas.tenToTwenty>maxGold.tenToTwenty)?teammate.timeline.damageTakenPerMinDeltas.tenToTwenty:maxGold.tenToTwenty;
+        maxGold.twentyToThirty = (teammate.timeline.damageTakenPerMinDeltas.twentyToThirty>maxGold.twentyToThirty)?teammate.timeline.damageTakenPerMinDeltas.twentyToThirty:maxGold.twentyToThirty;
+        maxGold.thirtyToEnd = (teammate.timeline.damageTakenPerMinDeltas.thirtyToEnd>maxGold.thirtyToEnd)?teammate.timeline.damageTakenPerMinDeltas.thirtyToEnd:maxGold.thirtyToEnd;
       });
 
-      var enemyWard = 0;
        var enemyTeam = _.filter(stats.stats.participants, function (o) {
         return o.teamId == (himself.teamId%200)+100;
       });
       enemyTeam.forEach(function(enemy){
        enemyWard += enemy.stats.wardsPlaced;
+        maxGold.zeroToTen = (enemy.timeline.goldPerMinDeltas.zeroToTen>maxGold.zeroToTen)?enemy.timeline.damageTakenPerMinDeltas.zeroToTen:maxGold.zeroToTen;
+        maxGold.tenToTwenty = (enemy.timeline.goldPerMinDeltas.tenToTwenty>maxGold.tenToTwenty)?enemy.timeline.damageTakenPerMinDeltas.tenToTwenty:maxGold.tenToTwenty;
+        maxGold.twentyToThirty = (enemy.timeline.goldPerMinDeltas.twentyToThirty>maxGold.twentyToThirty)?enemy.timeline.damageTakenPerMinDeltas.twentyToThirty:maxGold.twentyToThirty;
+        maxGold.thirtyToEnd = (enemy.timeline.goldPerMinDeltas.thirtyToEnd>maxGold.thirtyToEnd)?enemy.timeline.damageTakenPerMinDeltas.thirtyToEnd:maxGold.thirtyToEnd;
       });
-
       var matrix = {
         'killP':(himself.stats.kills+himself.stats.assists)/teamMatrix.nbKill*100,
         'deathP':himself.stats.deaths/teamMatrix.nbDeath*100,
         'wardPlaced':himself.stats.wardsPlaced/teamMatrix.totWardPlaced*100,
         "damageDealt":himself.stats.totalDamageDealtToChampions/teamMatrix.totDamageDealt*100,
-        "damageTaken0to10":himself.timeline.damageTakenPerMinDeltas.zeroToTen/teamMatrix.totDamageTaken0to10*100,
-        "damageTaken10to20":himself.timeline.damageTakenPerMinDeltas.tenToTwenty/teamMatrix.totDamageTaken10to20*100,
-        "damageTaken20to30":himself.timeline.damageTakenPerMinDeltas.twentyToThirty/teamMatrix.totDamageTaken20to30*100,
-        'damageTaken30':himself.timeline.damageTakenPerMinDeltas.thirtyToEnd/teamMatrix.totDamageTaken30*100,
+        "damageTaken0to10":himself.timeline.damageTakenPerMinDeltas.zeroToTen/teamMatrix.totDamageTaken0to10*60000/stats.stats.matchDuration,
+        "damageTaken10to20":himself.timeline.damageTakenPerMinDeltas.tenToTwenty/teamMatrix.totDamageTaken10to20*60000/stats.stats.matchDuration,
+        "damageTaken20to30":himself.timeline.damageTakenPerMinDeltas.twentyToThirty/teamMatrix.totDamageTaken20to30*60000/stats.stats.matchDuration,
+        'damageTaken30':himself.timeline.damageTakenPerMinDeltas.thirtyToEnd/teamMatrix.totDamageTaken30*100*(stats.stats.matchDuration-1800)/(stats.stats.matchDuration),
         'heal':himself.stats.totalHeal/teamMatrix.totHeal*100,
         'wardKilled':himself.stats.wardsKilled/enemyWard*100,
         'cc':himself.stats.totalTimeCrowdControlDealt/teamMatrix.totCc*100,
-        "goldLane0to10":himself.timeline.creepsPerMinDeltas.zeroToTen*187,
-        "goldFight0to10":himself.timeline.goldPerMinDeltas.zeroToTen*10 -1482 -(himself.timeline.creepsPerMinDeltas.zeroToTen*18.7),
-        "goldLane10to20":himself.timeline.creepsPerMinDeltas.tenToTwenty*187,
-        "goldFight10to20":himself.timeline.goldPerMinDeltas.tenToTwenty*10 -1227 -(himself.timeline.creepsPerMinDeltas.zeroToTen*18.7),
-        "goldLane20to30":himself.timeline.creepsPerMinDeltas.twentyToThirty*187,
-        "goldFight20to30":himself.timeline.goldPerMinDeltas.twentyToThirty*10 -1227 -(himself.timeline.creepsPerMinDeltas.zeroToTen*18.7),
-        "goldLane30":himself.timeline.creepsPerMinDeltas.thirtyToEnd*187,
-        "goldFight30":himself.timeline.goldPerMinDeltas.thirtyToEnd*10 -(2.045*(stats.matchDuration-1800)) -(himself.timeline.creepsPerMinDeltas.zeroToTen*187)
+        "goldLane0to10":(himself.timeline.creepsPerMinDeltas.zeroToTen*60000)/(10.1*stats.stats.matchDuration),
+        "goldLane10to20":(himself.timeline.creepsPerMinDeltas.tenToTwenty*60000)/(12.8*stats.stats.matchDuration),
+        "goldLane20to30":(himself.timeline.creepsPerMinDeltas.twentyToThirty*60000)/(12.8*stats.stats.matchDuration),
+        "goldLane30":(himself.timeline.creepsPerMinDeltas.thirtyToEnd*100*(stats.stats.matchDuration-1800))/(12.8*stats.stats.matchDuration),
+        "goldFight0to10":himself.timeline.goldPerMinDeltas.zeroToTen/maxGold.zeroToTen*60000/stats.stats.matchDuration,
+        "goldFight10to20":himself.timeline.goldPerMinDeltas.tenToTwenty/maxGold.tenToTwenty*60000/stats.stats.matchDuration,
+        "goldFight20to30":himself.timeline.goldPerMinDeltas.twentyToThirty/maxGold.twentyToThirty*60000/stats.stats.matchDuration,
+        "goldFight30":himself.timeline.goldPerMinDeltas.thirtyToEnd/maxGold.thirtyToEnd*100*(stats.stats.matchDuration-1800)/stats.stats.matchDuration
       };
 
-      console.log(enemyWard,himself.stats.wardsKilled);
 
       $(function () {
         // Age categories
@@ -109,7 +126,7 @@ angular.module('paintfusionApp')
             },
             plotOptions: {
               series: {
-                stacking: 'percent'
+                stacking: 'normal'
               }
             },
             tooltip: {
