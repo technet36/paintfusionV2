@@ -135,7 +135,6 @@ angular.module('paintfusionApp')
                   'Population: ' + Highcharts.numberFormat(Math.abs(this.point.y), 0);
               }
             },
-
             series: [{
               name:"defense",
               data: [-1*matrix.deathP, -1*matrix.wardKilled, 0, 0]
