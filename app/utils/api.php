@@ -34,7 +34,7 @@ function check_pseudo(){
 };  //uncomplete
 function check_server(){
   $server= $_GET['server'];
-  return ( check_SQL($server) && preg_match('/NA|EUNE|EUW|LAN|LAS|BR|TR|RU|OCE/',$server)) ? $server : false;
+  return ( check_SQL($server) && preg_match('/NA|EUNE|EUW|KR|LAN|LAS|BR|TR|RU|OCE/',$server)) ? $server : false;
 };
 function check_action(){
   $action= $_GET['action'];
@@ -72,7 +72,7 @@ switch (check_action()){
     $summonerId = check_summonerId();
     $server = check_server();
     if ($server && $summonerId ){
-      $url="https://".$server.".api.pvp.net/api/lol/euw/v1.4/summoner/".$summonerId."?api_key=".$api_key;
+      $url="https://".$server.".api.pvp.net/api/lol/".$server."/v1.4/summoner/".$summonerId."?api_key=".$api_key;
     }
     else {
       echo (json_encode(array('code'=>0,'msg'=>'invalid values. summonerId and server are needed')));
@@ -89,7 +89,7 @@ switch (check_action()){
     $pseudo = check_pseudo();
     $server = check_server();
     if ($server && $pseudo ){
-      $url="https://".$server.".api.pvp.net/api/lol/euw/v1.4/summoner/by-name/".$pseudo."?api_key=".$api_key;
+      $url="https://".$server.".api.pvp.net/api/lol/".$server."/v1.4/summoner/by-name/".$pseudo."?api_key=".$api_key;
     }
     else {
       //header("location: ../error.php?error=".$e->getMessage());
@@ -109,7 +109,7 @@ switch (check_action()){
     $server = check_server();
     $summonerId = check_summonerId();
     if ($server && $summonerId ){
-      $url="https://".$server.".api.pvp.net/api/lol/euw/v1.4/summoner/".$summonerId."/runes?api_key=".$api_key;
+      $url="https://".$server.".api.pvp.net/api/lol/".$server."/v1.4/summoner/".$summonerId."/runes?api_key=".$api_key;
     }
     else {
       //header("location: ../error.php?error=".$e->getMessage());
@@ -128,7 +128,7 @@ switch (check_action()){
     $summonerId = check_summonerId();
     $server = check_server();
     if ($server && $summonerId ){
-      $url="https://".$server.".api.pvp.net/api/lol/euw/v2.5/league/by-summoner/".$summonerId."/entry?api_key=".$api_key;
+      $url="https://".$server.".api.pvp.net/api/lol/".$server."/v2.5/league/by-summoner/".$summonerId."/entry?api_key=".$api_key;
     }
     else {
       echo (json_encode(array('code'=>0,'msg'=>'invalid values. summonerId and server are needed')));
@@ -146,7 +146,7 @@ switch (check_action()){
     $summonerId = check_summonerId();
     $server = check_server();
     if ($server && $summonerId ){
-      $url="https://".$server.".api.pvp.net/api/lol/euw/v1.3/game/by-summoner/".$summonerId."/recent?api_key=".$api_key;
+      $url="https://".$server.".api.pvp.net/api/lol/".$server."/v1.3/game/by-summoner/".$summonerId."/recent?api_key=".$api_key;
     }
     else {
       echo (json_encode(array('code'=>1,'msg'=>'invalid values. summonerId and server are needed')));
@@ -164,7 +164,7 @@ switch (check_action()){
     $idMatch = check_idMatch();
     $server = check_server();
     if ($server && $idMatch ){
-      $url="https://".$server.".api.pvp.net/api/lol/euw/v2.2/match/".$idMatch."?api_key=".$api_key;
+      $url="https://".$server.".api.pvp.net/api/lol/".$server."/v2.2/match/".$idMatch."?api_key=".$api_key;
     }
     else {
       echo (json_encode(array('code'=>1,'msg'=>'invalid values. idMatch and server are needed')));

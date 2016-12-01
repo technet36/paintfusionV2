@@ -1,44 +1,34 @@
 <div class="container-fluid">
-  {{greet}}
   <form class="form-horizontal">
     <div class="form-group">
       <label for="name"> Tournament name</label>
-      <input type="text" class="form-control" id="name" ng-model="form.name" placeholder="Name of the tournament">
+      <input type="text" class="form-control" id="name" ng-model="myForm.name.value" placeholder="{{myForm.name.placeHolder}}" pattern="{{myForm.name.pattern}}" uib-tooltip="{{myForm.name.tooltipTemplate}}">
     </div><!--name-->
     <div class="form-group">
+      <select class="form-control" id="server" name="server" uib-tooltip="{{myForm.server.tooltip}}">
+        <option ng-repeat="o in myForm.server.option" value="{{o.value}}" ng-selected="{{o.selected}}">
+          {{o.name}}
+        </option>
+      </select>
+    </div><!--server-->
+    <div class="form-group">
       <label> Tournament type</label>
-      <div  class="form-group">
-        <input  type="radio" name ="type" value="0" id="knockout" >
-        <label for="knockout">
-        knockout
-        <img src="../images/knockout.jpg" height="75" width="100">
-      </label>
-      </div>
-      <div class="form-group">
-        <input  type="radio" name ="type" value="1" id="knockoutLB">
-        <label for="knockoutLB">
-        knockout+looser bracket
-        <img src="../images/knockout.jpg" height="75" width="100">
-      </label>
-      </div>
-      <div class="form-group">
-        <input  type="radio" name ="type" value="3" id="GSknockout">
-        <label for="GSknockout">
-        Group stage+knockout
-        <img src="../images/knockout.jpg" height="75" width="100">
+      <div  class="form-group" ng-repeat="o in myForm.type.option" uib-tooltip="{{o.tooltipTemplate}}">
+        <input  type="radio" name ="type" value="{{o.value}}" id="{{o.value}}" ng-checked="{{o.selected}}" >
+        <label for="{{o.value}}">
+        {{o.name}}
+        <img src="{{o.image}}">
       </label>
       </div>
     </div><!--type-->
     <div class="form-group">
       <label for="maxPlayer">Number max of players</label>
-      <input type="number" class="form-control" id="maxPlayer" ng-model="form.maxPlayer" min="4">
+      <input type="number" class="form-control" id="maxPlayer" ng-model="myForm.maxPlayer.value" min="{{myForm.maxPlayer.min}}" uib-tooltip="{{myForm.maxPlayer.tooltipTemplate}}">
     </div><!--max player-->
     <div class="form-group">
       <label for="map"> Tournament map</label>
-      <select class="form-control" id="map" name="map" ng-model="form.map">
-        <option value="SUMMONERS_RIFT" selected>Summoners rift</option>
-        <option value="TWISTED_TREELINE">Twisted treeline</option>
-        <option value="HOWLING_ABYSS">Howling abyss</option>
+      <select class="form-control" id="map" name="map" uib-tooltip="{{myForm.map.tooltip}}">
+        <option ng-repeat="o in myForm.map.option" value="{{o.value}}" ng-selected="{{o.selected}}">{{o.name}}</option>
       </select>
     </div><!--map-->
     <div class="form-group">
@@ -61,7 +51,7 @@
     </div><!--date max registration-->
     <div class="form-group">
       <label for="note"> Description</label>
-      <textarea class="form-control" id="note" ng-model="form.note" placeholder="Describe your tournament"></textarea>
+      <textarea class="form-control" id="note" ng-model="myForm.description.value" placeholder="{{myForm.description.placeHolder}}" uib-tooltip="{{myForm.description.tooltipTemplate}}"></textarea>
     </div><!--note-->
     <button type="submit" class=" btn btn-primary">Submit</button>
   </form>
