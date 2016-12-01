@@ -1,12 +1,12 @@
-<div class="container-fluid">
-  <form class="form-horizontal">
+<div class="container-fluid" xmlns="http://www.w3.org/1999/html">
+  <form class="form-horizontal" name="tournament">
     <div class="form-group">
       <label for="name"> Tournament name</label>
-      <input type="text" class="form-control" id="name" ng-model="myForm.name.value" placeholder="{{myForm.name.placeHolder}}" pattern="{{myForm.name.pattern}}" uib-tooltip="{{myForm.name.tooltipTemplate}}">
+      <input type="text" required class="form-control" id="name" ng-model="myForm.name.value" placeholder="{{myForm.name.placeHolder}}" pattern="{{myForm.name.pattern}}" uib-tooltip="{{myForm.name.tooltipTemplate}}">
     </div><!--name-->
     <div class="form-group">
-      <select class="form-control" id="server" name="server" uib-tooltip="{{myForm.server.tooltip}}">
-        <option ng-repeat="o in myForm.server.option" value="{{o.value}}" ng-selected="{{o.selected}}">
+      <select class="form-control" required id="server" name="server" ng-model="myForm.server.value" uib-tooltip="{{myForm.server.tooltip}}">
+        <option ng-repeat="o in myForm.server.option" value="{{o.value}}">
           {{o.name}}
         </option>
       </select>
@@ -14,45 +14,51 @@
     <div class="form-group">
       <label> Tournament type</label>
       <div  class="form-group" ng-repeat="o in myForm.type.option" uib-tooltip="{{o.tooltipTemplate}}">
-        <input  type="radio" name ="type" value="{{o.value}}" id="{{o.value}}" ng-checked="{{o.selected}}" >
+        <input  type="radio" name ="type" value="{{o.value}}" id="{{o.value}}" ng-click="myForm.type.value=o.value" >
         <label for="{{o.value}}">
         {{o.name}}
-        <img src="{{o.image}}">
-      </label>
+          <img src="{{o.image}}">
+        </label>
       </div>
     </div><!--type-->
     <div class="form-group">
       <label for="maxPlayer">Number max of players</label>
-      <input type="number" class="form-control" id="maxPlayer" ng-model="myForm.maxPlayer.value" min="{{myForm.maxPlayer.min}}" uib-tooltip="{{myForm.maxPlayer.tooltipTemplate}}">
+      <input type="number" required class="form-control" id="maxPlayer" ng-model="myForm.maxPlayer.value" min="{{myForm.maxPlayer.min}}" uib-tooltip="{{myForm.maxPlayer.tooltipTemplate}}">
     </div><!--max player-->
     <div class="form-group">
       <label for="map"> Tournament map</label>
-      <select class="form-control" id="map" name="map" uib-tooltip="{{myForm.map.tooltip}}">
-        <option ng-repeat="o in myForm.map.option" value="{{o.value}}" ng-selected="{{o.selected}}">{{o.name}}</option>
+      <select class="form-control" required id="map" name="map" ng-model="myForm.map.value" uib-tooltip="{{myForm.map.tooltip}}">
+        <option ng-repeat="o in myForm.map.option" value="{{o.value}}" >{{o.name}}</option>
       </select>
     </div><!--map-->
     <div class="form-group">
       <label for="date"> Tournament date</label>
       <p class="input-group" id="date">
-        <input type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="dt" is-open="popup1.opened" ng-required="true" close-text="Close" alt-input-formats="altInputFormats" />
+        <input type="text" required class="form-control" uib-datepicker-popup="{{myForm.date.format}}" ng-model="myForm.date.value" is-open="myForm.date.isOpen" ng-required="true" close-text="Close" />
           <span class="input-group-btn">
-            <button type="button" class="btn btn-default" ng-click="open1()"><i class="glyphicon glyphicon-calendar"></i></button>
+            <button type="button" class="btn btn-default" ng-click="myForm.date.isOpen =!myForm.date.isOpen"><i class="glyphicon glyphicon-calendar"></i></button>
           </span>
       </p>
     </div><!--date-->
     <div class="form-group">
       <label for="registrationMaxDate"> Tournament limit date for player registration</label>
       <p class="input-group" id="registrationMaxDate">
-      <input type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="dt" is-open="popup1.opened" ng-required="true" close-text="Close" alt-input-formats="altInputFormats" />
+        <input type="text" required class="form-control" uib-datepicker-popup="{{myForm.registrationPeriod.from
+.format}}" ng-model="myForm.registrationPeriod.from.value" is-open="myForm.registrationPeriod.from.isOpen" ng-required="true" close-text="Close"/>
         <span class="input-group-btn">
-          <button type="button" class="btn btn-default" ng-click="open1()"><i class="glyphicon glyphicon-calendar"></i></button>
+          <button type="button" class="btn btn-default" ng-click="myForm.registrationPeriod.from.isOpen = !myForm.registrationPeriod.from.isOpen"><i class="glyphicon glyphicon-calendar"></i></button>
         </span>
-    </p>
+        <input type="text" required class="form-control" uib-datepicker-popup="{{myForm.registrationPeriod.to
+.format}}" ng-model="myForm.registrationPeriod.to.value" is-open="myForm.registrationPeriod.to.isOpen" ng-required="true" close-text="Close"/>
+        <span class="input-group-btn">
+          <button type="button" class="btn btn-default" ng-click="myForm.registrationPeriod.to.isOpen = !myForm.registrationPeriod.to.isOpen"><i class="glyphicon glyphicon-calendar"></i></button>
+        </span>
+      </p>
     </div><!--date max registration-->
     <div class="form-group">
       <label for="note"> Description</label>
       <textarea class="form-control" id="note" ng-model="myForm.description.value" placeholder="{{myForm.description.placeHolder}}" uib-tooltip="{{myForm.description.tooltipTemplate}}"></textarea>
     </div><!--note-->
-    <button type="submit" class=" btn btn-primary">Submit</button>
+    <button class=" btn btn-primary" ng-disabled="tournament.$invalid" ng-click="submit()" >Submit</button>
   </form>
 </div>

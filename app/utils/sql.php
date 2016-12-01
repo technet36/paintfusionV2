@@ -97,8 +97,8 @@ function check_maxPlayer() {
 function check_map () {
   $map = $_GET['map'];
   //The pattern is "SUMMONERS_RIFT or TWISTED_TREELINE or HOWLING_ABYSS
-  if ( check_SQL($map) && preg_match('/SUMMONERS RIFT|TWISTED TREELINE|HOWLING ABYSS/',$map ))
-    return true;
+  if ( check_SQL($map) && preg_match('/SUMMONERS_RIFT|TWISTED_TREELINE|HOWLING_ABYSS/',$map ))
+    return $map;
   else return false;
 };
 function check_date() {
@@ -128,7 +128,7 @@ function check_password(){
 };  //uncomplete
 function check_server(){
   $server= $_GET['server'];
-  return ( check_SQL($server) && preg_match('/NA|EUNE|EUW|LAN|LAS|BR|TR|RU|OCE/',$server)) ? $server : false;
+  return ( check_SQL($server) && preg_match('/NA|EUNE|KR|EUW|LAN|LAS|BR|TR|RU|OCE/',$server)) ? $server : false;
 };
 function check_matGen(){
   $matGen= $_GET['matGen'];
@@ -364,11 +364,12 @@ switch (check_action()){
     $date = check_date();//
     $registrationMaxDate = check_registrationMaxDate();//
     $note = check_note();
+    $server = check_server();
 // date forme ex : 2016-11-15 00:00:00
-    if ($tournamentName && $host && $map && $date && $registrationMaxDate){
+    if ($tournamentName && $host && $map && $date && $server && $registrationMaxDate){
       $insertTournament = $bdd->prepare("
-INSERT INTO tournament_t (`tournament_name`, `state`, `host`, `privacy_lvl`, `tournament_type`, `max_player`, `map`, `date`, `registration _max_date`, `note`)
- VALUES (:tournamentName, :state, :host, :privacyLvl, :tournamentType, :maxPlayer, :map, :date, :registrationMaxDate, :note)");
+INSERT INTO tournament_t (`tournament_name`, `state`, `host`, `privacy_lvl`, `tournament_type`, `max_player`, `map`, `date`, `registration _max_date`, `note`, `server`)
+ VALUES (:tournamentName, :state, :host, :privacyLvl, :tournamentType, :maxPlayer, :map, :date, :registrationMaxDate, :note, :server)");
       $insertTournament->bindParam(":tournamentName",$tournamentName);
       $insertTournament->bindParam(":state",$state);
       $insertTournament->bindParam(":host",$host);
@@ -379,15 +380,17 @@ INSERT INTO tournament_t (`tournament_name`, `state`, `host`, `privacy_lvl`, `to
       $insertTournament->bindParam(":date",$date);
       $insertTournament->bindParam(":registrationMaxDate",$registrationMaxDate);
       $insertTournament->bindParam(":note",$note);
+      $insertTournament->bindParam(":server",$server);
     }
     else {
-      echo (json_encode(array('code'=>1,'msg'=>'invalid values. tournamentName, host, map, date and registrationMaxDate are needed','name'=>$tournamentName,'host'=>$host,'map'=>$map,'date'=>$date,'maxDate'=>$registrationMaxDate)));
+      echo (json_encode(array('code'=>1,'msg'=>'invalid values. tournamentName, host, map, date, server and registrationMaxDate are needed','name'=>$tournamentName,'host'=>$host,'map'=>$map,'date'=>$date,'server'=>$server,'maxDate'=>$registrationMaxDate)));
       die();
     }
     $insertTournament->execute();
     echo (json_encode(array('code'=>0,'msg'=>'Registration done')));
         break;
-    default:
+
+  default:
       //header("location: ../error.php?error=".$e->getMessage());
       echo (json_encode(array('code'=>1,'msg'=>'failed sql.php','action'=>check_action())));
       die();

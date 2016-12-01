@@ -8,21 +8,17 @@
  * Controller of the paintfusionApp
  */
 angular.module('paintfusionApp')
-  .controller('TournamentCreatorCtrl', function ($scope, apiService, sqlService) {
+  .controller('TournamentCreatorCtrl', function ($scope, apiService, sqlService, autreService) {
     //sqlService.createTournament("monTournois","moi",1,1,64,"SUMMONERS_RIFT",'2016-11-23 00:00:00','2016-11-22 00:00:00','best tournament ever').then(function(data){console.log(data);},function(reason){console.log(reason);})
-
-    $scope.popup1 = {
-      opened: false
-    };
-    $scope.dt = new Date;
-
+console.log(autreService.getMe());
+    $scope.timeStamp = new Date;
     $scope.myForm = {
       'name': {
         'default':'',
         'value':'',
         'placeHolder':"My custom tournament",
         'tooltipTemplate':"The name of your tournament",
-        'pattern':'/^[\w+\s]+$/'
+        'pattern':'^[\\w+\\s]+$'
       },
       'type':{
         'value':'',
@@ -30,20 +26,17 @@ angular.module('paintfusionApp')
           'name':"Knockout",
           'value':'knockout',
           'tooltipTemplate':"Basics eliminator's stage",
-          'image':"../images/tournament_icon.png",
-          'selected':true
+          'image':"../images/tournament_icon.png"
         }, {
           'name':"Knockout + looser bracket",
           'value':'knockoutLB',
           'tooltipTemplate':"eliminator's stage and mini tournament for the firsts loosers",
-          'image':"../images/tournament_icon.png",
-          'selected':false
+          'image':"../images/tournament_icon.png"
         }, {
           'name':"Group stage + knockout",
           'value':'groupStageKnockout',
           'tooltipTemplate':"group stage then eliminator's",
-          'image':"../images/tournament_icon.png",
-          'selected':false
+          'image':"../images/tournament_icon.png"
         }
         ]},
       'server': {
@@ -51,16 +44,13 @@ angular.module('paintfusionApp')
         'tooltip':'Choisissez le server sur lequel le tournois se déroulera',
         'option':[{
           'name':"europe West",
-          'value':"EUW",
-          'selected':true
+          'value':"EUW"
         }, {
           'name':"North America",
-          'value':"NA",
-          'selected':false
+          'value':"NA"
         }, {
           'name':"Korea",
-          'value':"KR",
-          'selected':false
+          'value':"KR"
         }
       ]},
       'maxPlayer': {
@@ -74,30 +64,37 @@ angular.module('paintfusionApp')
         'tooltip':'choix de la map sur laquelle se deroulera le tournois',
         'option':[{
           'name':"Summoners Rift",
-          'value':"SUMMONERS_RIFT",
-          'selected':true
+          'value':"SUMMONERS_RIFT"
         }, {
           'name':"Twisted Treeline",
-          'value':"TWISTED_TREELINE",
-          'selected':false
+          'value':"TWISTED_TREELINE"
         }, {
           'name':"Howling Abyss",
-          'value':"HOWLING_ABYSS",
-          'selected':false
+          'value':"HOWLING_ABYSS"
         }
       ]},
       'date':{
-        'value':'',
-        'default':Date.now(),
-        'minDate':Date.now(),
-        'maxDate':0,
+        'value':$scope.timeStamp,
+        'default':$scope.timeStamp,
+        'format':'dd-MM-yyyy',
+        'isOpen':false,
         'tooltipTemplate':"Choose the date you want your tournament to happened"
       },
       'registrationPeriod':{
-        'value':'',
-        'minDate':Date.now(),
-        'maxDate':0,
-        'tooltipTemplate':"Choose the date you want the player to be able to register"
+        'from':{
+          'value':$scope.timeStamp,
+          'default':$scope.timeStamp,
+          'format':'dd-MM-yyyy',
+          'isOpen':false,
+          'tooltipTemplate':"Choose the date you want the player to begin to be able to register"
+        },
+        'to':{
+          'value':$scope.timeStamp,
+          'default':$scope.timeStamp,
+          'format':'dd-MM-yyyy',
+          'isOpen':false,
+          'tooltipTemplate':"Choose the date you want the player not to be able to register anymore"
+        }
       },
       'description':{
         'value':'',
@@ -106,11 +103,23 @@ angular.module('paintfusionApp')
         'tooltipTemplate':"Describe the tournament"
       }
     };
-console.log($scope.myForm.maxPlayer.value);
-    $scope.formats = ['dd-MMMM-yyyy', 'yyyy/MM/dd', 'dd.MM.yyyy', 'shortDate'];
 
-    $scope.open1 = function() {
-      $scope.popup1.opened = true;
+    $scope.submit = function(form){
+      var formulaire = {
+        'name':$scope.myForm.name.value,
+        'server':$scope.myForm.server.value,
+        'type':$scope.myForm.type.value,
+        'maxPlayer':$scope.myForm.maxPlayer.value,
+        'map':$scope.myForm.map.value,
+        'date':$scope.myForm.date.value,
+        'dateMin':$scope.myForm.registrationPeriod.from.value,
+        'dateMax':$scope.myForm.registrationPeriod.to.value,
+        'privacyLvl':'',
+        'host':'technet',
+        'description':$scope.myForm.description.value
+      }
+      //console.log(formulaire);
+      sqlService.createTournament(formulaire).then(function(data){console.log(data);},function(reason){console.log(reason);})
     };
 
   });
