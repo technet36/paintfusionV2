@@ -37,15 +37,4 @@ angular.module('paintfusionApp')
       $scope.profilOk = 1;
     },function(reason){console.log(reason);});
 
-    var matrix =[
-      [100,54],//[nbGame,winRate]
-      [86,2600],//[% gold in lane, gold in fight]
-      [25,59],//[death participation, kill participation]
-      [12,0.2],//[(nbWard killed/nbEnnemyWardPlaced)/min,(nbWard)/min]
-      [40,110]//[%damage dealt to buildings,% damageDealt+received+cc+heal]
-    ];
-
-    if ($scope.profilOk){
-    }
-
   });

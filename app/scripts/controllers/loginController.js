@@ -46,7 +46,6 @@ angular.module('paintfusionApp')
     //console.log($scope.loginForm);
 
     sqlService.login($scope.loginForm.ids.pseudo,$scope.loginForm.ids.server,$scope.loginForm.password).then(function(userData) {
-        console.log(autreService.getMe().server);
         $location.path('/dashboard/'+autreService.getMe().server+'/'+autreService.getMe().pseudo);
       },function (reason){console.log(reason);});
 

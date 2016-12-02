@@ -8,29 +8,6 @@
  * All routes and states in the paintfusion application.
  */
 angular.module('paintfusionApp')
-  .directive('history', function() {
-    return {
-      restrict: 'E',
-      scope: {
-        sumId: '=sumId',
-        server: '=server'
-      },
-      controller:'HistoryCtrl',
-      templateUrl:'views/partials/historyDirective.html'
-    }
-  })
-  .directive('matrix', function() {
-    return {
-      restrict: 'E',
-      scope: {
-        sumId: '=sumId',
-        gameId: '=gameId',
-        server: '=server'
-      },
-      controller:'MatrixCtrl',
-      templateUrl:'views/partials/matrixDirective.html'
-    }
-  })
   .config(function ($stateProvider, $urlRouterProvider) {
     $urlRouterProvider.otherwise('/dashboard');
 
@@ -48,10 +25,16 @@ angular.module('paintfusionApp')
         controller: 'LoginCtrl'
         })
       .state('tournamentCreator',{
-        url:'/tournament',
+        url:'/tournament/creator',
         title: 'Paintfusion: tournament',
         templateUrl: 'views/tournament_creator.html',
         controller: 'TournamentCreatorCtrl'
+        })
+      .state('tournamentDashboard',{
+        url:'/tournament/:tournament',
+        title: 'Paintfusion: tournament',
+        templateUrl: 'views/tournament_dashboard.html',
+        controller: 'TournamentDashboardCtrl'
         })
       .state('history',{
         templateUrl: 'views/tournament_creator.html',

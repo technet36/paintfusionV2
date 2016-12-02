@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Apr 26, 2016 at 04:46 PM
+-- Generation Time: Dec 02, 2016 at 10:26 AM
 -- Server version: 5.6.17
 -- PHP Version: 5.5.12
 
@@ -39,7 +39,8 @@ CREATE TABLE IF NOT EXISTS `match_t` (
   UNIQUE KEY `id_riot_game` (`id_riot_game`),
   KEY `id_tournament` (`id_tournament`),
   KEY `winner_to_match` (`winner_to_match`),
-  KEY `looser_to_match` (`looser_to_match`)
+  KEY `looser_to_match` (`looser_to_match`),
+  KEY `id_match` (`id_match`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
@@ -68,7 +69,7 @@ CREATE TABLE IF NOT EXISTS `team_t` (
   `nom_team` varchar(65) CHARACTER SET utf8 NOT NULL DEFAULT 'unknown',
   `premade` tinyint(1) NOT NULL DEFAULT '0' COMMENT '0=no, 1= yes',
   `points` int(11) DEFAULT NULL,
-  `groupe` char(1) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `group` char(1) COLLATE utf8_unicode_ci DEFAULT NULL,
   `privacy_lvl` tinyint(4) DEFAULT NULL,
   PRIMARY KEY (`id_team`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
@@ -108,13 +109,31 @@ CREATE TABLE IF NOT EXISTS `tournament_t` (
   `privacy_lvl` tinyint(3) unsigned DEFAULT NULL,
   `tournament_type` tinyint(3) unsigned DEFAULT NULL COMMENT '0= knockout, 1=knockout+looser bracket, 3=groupestage+knockout',
   `max_player` smallint(5) unsigned DEFAULT NULL COMMENT 'NULL= unlimited',
-  `map` enum('summoner rift','howling abyss','crystal scar','twisted treeline') CHARACTER SET utf8 NOT NULL DEFAULT 'summoner rift',
-  `date` datetime NOT NULL,
-  `registration _max_date` datetime NOT NULL,
+  `map` enum('SUMMONERS_RIFT','TWISTED8TREELINE','HOWLING_ABYSS') CHARACTER SET utf8 NOT NULL DEFAULT 'SUMMONERS_RIFT',
+  `date` bigint(20) NOT NULL,
+  `registration _max_date` bigint(20) NOT NULL,
   `note` varchar(535) CHARACTER SET utf8 DEFAULT NULL,
-  `id_riot_tournament` int(10) unsigned NOT NULL,
+  `id_riot_tournament` int(10) unsigned DEFAULT NULL,
+  `server` enum('EUW','NA','OCE','KR') COLLATE utf8_unicode_ci NOT NULL DEFAULT 'EUW',
   PRIMARY KEY (`id_tournament`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=12 ;
+
+--
+-- Dumping data for table `tournament_t`
+--
+
+INSERT INTO `tournament_t` (`id_tournament`, `tournament_name`, `state`, `host`, `privacy_lvl`, `tournament_type`, `max_player`, `map`, `date`, `registration _max_date`, `note`, `id_riot_tournament`, `server`) VALUES
+(1, 'test', 1, 'moi', 1, 1, 11, '', 20161123000000, 20161115000000, 'my note', 0, 'EUW'),
+(2, 'monTournois', 1, 'moi', 0, 0, 0, '', 0, 0, '', NULL, 'EUW'),
+(3, 'monTournois', 1, 'moi', 1, 1, 64, '', 20161123000000, 20161122000000, 'best tournament ever', NULL, 'EUW'),
+(4, 'monTournois', 1, 'moi', 1, 1, 64, '', 20161123000000, 20161122000000, 'best tournament ever', NULL, 'EUW'),
+(5, 'monTournois', 1, 'moi', 0, 1, 55, '', 0, 0, 'montext', NULL, 'EUW'),
+(6, 'myTournament', 1, 'technet', 0, 0, 20, '', 0, 0, 'the BEst', NULL, 'NA'),
+(7, 'myTournament', 1, 'technet', 0, 0, 20, '', 0, 0, 'the BEst', NULL, 'NA'),
+(8, 'fight2win', 1, 'technet', 0, 0, 20, '', 0, 0, '', NULL, ''),
+(9, 'fight2win', 1, 'technet', 0, 0, 20, '', 1483029447000, 1482251847000, '', NULL, ''),
+(10, 'fight2win', 1, 'technet', 0, 0, 20, '', 1483029447000, 1482251847000, '', NULL, ''),
+(11, 'fight2win', 1, 'technet', 0, 0, 20, '', 1483029447000, 1482251847000, '', NULL, 'KR');
 
 -- --------------------------------------------------------
 
@@ -157,8 +176,6 @@ CREATE TABLE IF NOT EXISTS `user_t` (
   `id_user` int(8) unsigned NOT NULL AUTO_INCREMENT,
   `pseudo` varchar(65) COLLATE utf8_unicode_ci NOT NULL COMMENT 'pseudo in game',
   `password` varchar(128) CHARACTER SET utf8 NOT NULL,
-  `nom` varchar(65) CHARACTER SET utf8 DEFAULT NULL,
-  `prenom` varchar(65) CHARACTER SET utf8 DEFAULT NULL,
   `email` varchar(65) CHARACTER SET utf8 NOT NULL COMMENT 'for password recovery',
   `server` enum('NA','EUNE','EUW','LAN','LAS','BR','TR','RU','OCE') CHARACTER SET utf8 NOT NULL,
   `mat_gen` varchar(65) CHARACTER SET utf8 DEFAULT NULL COMMENT 'matrix of the skill of the player',
@@ -167,14 +184,15 @@ CREATE TABLE IF NOT EXISTS `user_t` (
   `privacy_lvl` tinyint(4) DEFAULT NULL,
   `summonerId` int(10) unsigned NOT NULL,
   PRIMARY KEY (`id_user`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=48 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=70 ;
 
 --
 -- Dumping data for table `user_t`
 --
 
-INSERT INTO `user_t` (`id_user`, `pseudo`, `password`, `nom`, `prenom`, `email`, `server`, `mat_gen`, `note`, `status`, `privacy_lvl`, `summonerId`) VALUES
-(47, 'technet', '9bcd168334ea49016364e47cdfa777b2dbc378911569fa5b6aaf993ff66d177d', '', '', 'ellipse.paro@gmail.com', 'EUW', NULL, NULL, 1, NULL, 63657737);
+INSERT INTO `user_t` (`id_user`, `pseudo`, `password`, `email`, `server`, `mat_gen`, `note`, `status`, `privacy_lvl`, `summonerId`) VALUES
+(64, 'technet1', '3ebccc40587519f80b74fa11bc1f6858ac5446f55b8067ba2882d6a05fdca5cf', 'noreply@nonsulting.fr', 'EUW', NULL, NULL, 1, NULL, 72170695),
+(69, 'technet', 'bf222a8761846f46ca5e0586019422beab3e468b4edbfd733aa815de0deda371', '', 'EUW', NULL, NULL, 1, NULL, 63657737);
 
 --
 -- Constraints for dumped tables

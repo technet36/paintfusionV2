@@ -1,0 +1,36 @@
+<div class="container-fluid">
+Hi {{pseudo}}!
+
+<form class="form-inline">
+  <div class="form-group">
+    <label for="searchSummoner">Search a summoner</label>
+    <input type="text" id="searchSummoner" ng-model="searchPseudo">
+  </div>
+  <div class="form-group">
+    <label for="navserver">Server</label>
+    <select id="navserver" ng-model="searchServer" >
+      <option ng-repeat="server in serverTab" value="{{server.id}}">{{server.name}}</option>
+    </select>
+  </div>
+
+  <button ng-click="search(server.id,pseudo)" type="submit" class="btn btn-default">Search</button>
+</form>
+<br>
+<form class="form-inline">
+  <div class="form-group">
+    <label for="searchTournament">Search a tournament</label>
+    <input type="text" id="searchTournament">
+  </div>
+  <button type="submit" class="btn btn-default">Search</button>
+</form>
+<br>
+<div class="news bg-warning">
+  <p>New tournament in paris!!</p>
+</div>
+<br>
+<div class="serverState">
+  <li>EUW : OK</li>
+  <li>NA : KO</li>
+  <li>KOR : OP</li>
+</div>
+</div>
