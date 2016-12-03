@@ -72,5 +72,16 @@ var that = this;
       });
     };
 
+    this.searchTournament = function (server, sumId) {
+      var deferred = $q.defer();
+      return $http.get("http://localhost:80/paintfusion/app/utils/sql.php?action=searchTournament&server="+server+"&summonerId="+sumId).then(function(data){
+        data.data.code>=100?deferred.reject(data.data):deferred.resolve(data.data);
+        return deferred.promise;
+      },function(reason){
+        deferred.reject(reason);
+        return deferred.promise;
+      });
+    }
+
 
   });

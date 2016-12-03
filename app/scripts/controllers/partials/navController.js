@@ -8,7 +8,7 @@ angular.module('paintfusionApp')
       {"id": "EUW", "name": "Europe west"},
       {"id": "NA", "name": "North America"},
       {"id": "KR", "name": "Korea"},
-      {"id": "EUNE", "name": "Europe NOrth-East"},
+      {"id": "EUNE", "name": "Europe North-East"},
       {"id": "BR", "name": "Brazil"},
       {"id": "LAN", "name": "Europe west"},
       {"id": "LAS", "name": "Europe west"},

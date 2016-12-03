@@ -22,7 +22,6 @@ angular.module('paintfusionApp')
       'icon':0
     };
     $scope.profilOk = 0;
-
     apiService.getProfileByPseudo($scope.profil.pseudo,$scope.profil.server).then(function(data){
       _.set($scope.profil,'sumId',data.profil.id);
       _.set($scope.profil,'lvl',data.profil.summonerLevel);

@@ -1,4 +1,10 @@
 <?php
+/*
+ * code de retour:
+ * 0-99 -> ok
+ * 100-199 -> pb input values
+ * 200-299 -> pb bdd
+ * */
 
 header('Access-Control-Allow-Origin: http://localhost:9000');
 header('Content-Type: application/json');
@@ -16,7 +22,8 @@ try {
 
 } catch (PDOException $e) {
     header("location: ../error.php?error=".$e->getMessage());
-    die("<font color=\"red\">SQLInsert: Erreur de connexion : " . $e->getMessage() . "</font>");
+  echo (json_encode(array('code'=>200,'msg'=>'problem from the BDD connection')));
+  die();
 }
 function check_SQL ($param) {  //uncomplete
   return $param;
@@ -152,11 +159,11 @@ $mail = $_GET['mail'];
     return true;
   else return false;
 };
+//########################
 function check_action(){
   $action= $_GET['action'];
-  return ( preg_match('/login|signup|userExist|userProfile|createTournament/',$action)) ? $action: false;
+  return ( preg_match('/login|signup|userExist|searchTournament|userProfile|createTournament/',$action)) ? $action: false;
 };
-//########################
 function encrypt_password ($pass) {
   $pass.="é(-è_%ù*µ^schbjoui¨?bgv,:!RTDJtf§1996";
   return hash("sha256",$pass);
@@ -389,7 +396,37 @@ INSERT INTO tournament_t (`tournament_name`, `state`, `host`, `privacy_lvl`, `to
     $insertTournament->execute();
     echo (json_encode(array('code'=>0,'msg'=>'Registration done')));
         break;
+  case "searchTournament":
+    $summonerId = check_summonerId();
+    $server= check_server();
+    if($summonerId && $server){
+      $searchTournament = $bdd->prepare("
+SELECT tournament_name,tournament_t.id_tournament AS tournamentId, host, `date`,server_tournament AS server
+FROM
+	`tournament_t` NATURAL JOIN tournament_to_user NATURAL JOIN user_t
+WHERE user_t.server = :server AND user_t.summonerId = :summonerId");
+      $searchTournament->bindParam(":server",$server);
+      $searchTournament->bindParam(":summonerId",$summonerId);
 
+    }
+    else{
+      echo (json_encode(array('code'=>100,'msg'=>'invalid values, server and summonerId are needed','server'=>$server,'summonerId'=>$summonerId)));
+      die();
+    }
+    $res=$searchTournament->execute();
+    $response = array();
+    //$response= $searchTournament-> fetch(PDO::FETCH_ASSOC);
+    if ($res){
+      while (($row= $searchTournament-> fetch(PDO::FETCH_ASSOC)) !== false) {
+        array_push($response,$row);
+      }
+      echo (json_encode(array('code'=>0,'msg'=>'ok','data'=>$response)));
+    }
+    else {
+      echo (json_encode(array('code'=>100,'msg'=>'no tournament for this user','sumId'=>$summonerId,'server'=>$server)));
+    }
+
+    break;
   default:
       //header("location: ../error.php?error=".$e->getMessage());
       echo (json_encode(array('code'=>1,'msg'=>'failed sql.php','action'=>check_action())));

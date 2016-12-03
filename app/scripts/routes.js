@@ -31,7 +31,7 @@ angular.module('paintfusionApp')
         controller: 'TournamentCreatorCtrl'
         })
       .state('tournamentDashboard',{
-        url:'/tournament/:tournament',
+        url:'/tournament/:server/:tournament',
         title: 'Paintfusion: tournament',
         templateUrl: 'views/tournament_dashboard.html',
         controller: 'TournamentDashboardCtrl'

@@ -8,10 +8,26 @@
     <div class="collapse navbar-collapse" id="js-navbar-collapse">
 
       <ul class="nav navbar-nav">
-        <li><a  ui-sref="login">login</a></li>
+        <li><a ui-sref="login">login</a></li>
         <li><a ui-sref="tournamentCreator">Create tournament</a></li>
-        <li><a ui-sref="tournamentDashboard/montournois">Tournament dashboard</a></li>
+
+      </ul>
+
+    </div>
+    <div class="dropdown">
+      <button ng-click="tournamentList()" class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+        My tournaments
+        <span class="caret"></span>
+      </button>
+      <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+        <li ng-if="tournaments" ng-repeat="tournament in tournaments">
+          <a  ng-click="tournamentLink(tournament.tournament_name,tournament.server)">
+            {{tournament.tournament_name}}
+          </a>
+        </li>
+        <a ng-if="!tournaments">No tournament</a>
       </ul>
     </div>
   </div>
-</div>
+
+  </div>

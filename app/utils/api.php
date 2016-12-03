@@ -1,5 +1,13 @@
 <?php
 
+/*
+ * code de retour:
+ * 0-99 -> ok
+ * 100-199 -> pb input values
+ * 400-499 -> bad request api
+ * 500-599 -> api down
+ * */
+
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: http://localhost:9000');
 
@@ -93,7 +101,7 @@ switch (check_action()){
     }
     else {
       //header("location: ../error.php?error=".$e->getMessage());
-      echo (json_encode(array('code'=>300,'msg'=>'invalid values. pseudo and server are needed','location'=>'getting the profile by the pseudo')));
+      echo (json_encode(array('code'=>300,'msg'=>'invalid values. pseudo and server are needed','server'=>$server,'pseudo'=>$pseudo ,'location'=>'getting the profile by the pseudo')));
       die();
     }
     $response = execute_request($url);
