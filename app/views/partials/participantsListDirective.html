@@ -1,0 +1,48 @@
+
+<div class="container-fluid" ng-if="tournamentId">
+  {{greet}}
+  {{tournamentId}}
+
+  <table class="table table-bordered table-striped">
+    <thead>
+    <tr>
+      <td>
+        <a href="#" ng-click="sortType = 'pseudo'; sortReverse = !sortReverse">
+        <span ng-show="sortType == 'pseudo'" class="fa fa-caret-down"></span>
+        Pseudo
+        </a>
+      </td>
+      <td>
+        <a href="#" ng-click="sortType = 'ranking'; sortReverse = !sortReverse">
+        <span ng-show="sortType == 'fish'" class="fa fa-caret-down"></span>
+          Ranking
+        </a>
+      </td>
+      <td>
+        <a href="#" ng-click="sortType = 'post_pref1'; sortReverse = !sortReverse">
+        <span ng-show="sortType == 'fish'" class="fa fa-caret-down"></span>
+          Post 1
+        </a>
+      </td>
+      <td>
+        <a href="#" ng-click="sortType = 'post_pref2'; sortReverse = !sortReverse">
+        <span ng-show="sortType == 'fish'" class="fa fa-caret-down"></span>
+          Post 2
+        </a>
+      </td>
+    </tr>
+    </thead>
+
+    <tbody>
+    <tr ng-repeat="participant in participantTab| orderBy:sortType:sortReverse">
+      <td>{{ participant.pseudo }}</td>
+      <td>NULL</td>
+      <!--<td>{{ participant.ranking}}</td>-->
+      <td>{{ participant.post_pref1}}</td>
+      <td>{{ participant.post_pref2}}</td>
+    </tr>
+    </tbody>
+
+  </table>
+
+</div>

@@ -1,8 +1,5 @@
-test tournament html
-{{greet}}
-<br>
-<div ng-if="tournament && server">
-{{tournament}}
-<br>
-{{server}}
+<h1>{{tournament}}</h1>
+<div class="container-fluid">
+  <info-tournament tournament-name="tournament" tournament-server="server"></info-tournament>
+  <participants-list tournament-id="data.id_tournament" ></participants-list>
 </div>

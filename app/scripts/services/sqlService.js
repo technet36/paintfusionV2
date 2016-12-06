@@ -81,7 +81,29 @@ var that = this;
         deferred.reject(reason);
         return deferred.promise;
       });
-    }
+    };
+
+    this.getTournament = function (server, name) {
+      var deferred = $q.defer();
+      return $http.get("http://localhost:80/paintfusion/app/utils/sql.php?action=getTournament&server="+server+"&tournamentName="+name).then(function(data){
+        data.data.code>=100?deferred.reject(data.data):deferred.resolve(data.data);
+        return deferred.promise;
+      },function(reason){
+        deferred.reject(reason);
+        return deferred.promise;
+      });
+    };
+
+    this.getParticipants= function (idT) {
+      var deferred = $q.defer();
+      return $http.get("http://localhost:80/paintfusion/app/utils/sql.php?action=getParticipants&idTournament="+idT).then(function(data){
+        data.data.code>=100?deferred.reject(data.data):deferred.resolve(data.data);
+        return deferred.promise;
+      },function(reason){
+        deferred.reject(reason);
+        return deferred.promise;
+      });
+    };
 
 
   });

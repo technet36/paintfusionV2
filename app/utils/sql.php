@@ -162,7 +162,7 @@ $mail = $_GET['mail'];
 //########################
 function check_action(){
   $action= $_GET['action'];
-  return ( preg_match('/login|signup|userExist|searchTournament|userProfile|createTournament/',$action)) ? $action: false;
+  return ( preg_match('/login|signup|getParticipants|getTournament|userExist|searchTournament|userProfile|createTournament/',$action)) ? $action: false;
 };
 function encrypt_password ($pass) {
   $pass.="é(-è_%ù*µ^schbjoui¨?bgv,:!RTDJtf§1996";
@@ -226,7 +226,7 @@ switch (check_action()){
     $password= check_password();
     if ($server && $pseudo && $password){
       $password= encrypt_password($password);
-      $user = $bdd->prepare ("SELECT `id_user`,`mat_gen`,`status`,`summonerId`,`privacy_lvl` FROM `user_t` WHERE `pseudo`=:pseudo AND `server`= :server AND `password`=:password");
+      $user = $bdd->prepare ("SELECT `id_user`,`mat_gen`,`status`,`summonerId` FROM `user_t` WHERE `pseudo`=:pseudo AND `server`= :server AND `password`=:password");
       $user->bindParam(':server',$server);
       $user->bindParam(':pseudo',$pseudo);
       $user->bindParam(':password',$password);
@@ -249,8 +249,7 @@ switch (check_action()){
           'msg'=> 'login done',
           'matrix'=>$profil['mat_gen'],
           'status'=>$profil['status'],
-          'sumId'=>$profil['summonerId'],
-          'privacyLvl'=>$profil['privacy_lvl']
+          'sumId'=>$profil['summonerId']
         )
       ));
     }
@@ -401,7 +400,7 @@ INSERT INTO tournament_t (`tournament_name`, `state`, `host`, `privacy_lvl`, `to
     $server= check_server();
     if($summonerId && $server){
       $searchTournament = $bdd->prepare("
-SELECT tournament_name,tournament_t.id_tournament AS tournamentId, host, `date`,server_tournament AS server
+SELECT tournament_name,tournament_t.id_tournament AS tournamentId, host, `state`,server_tournament AS server
 FROM
 	`tournament_t` NATURAL JOIN tournament_to_user NATURAL JOIN user_t
 WHERE user_t.server = :server AND user_t.summonerId = :summonerId");
@@ -424,6 +423,53 @@ WHERE user_t.server = :server AND user_t.summonerId = :summonerId");
     }
     else {
       echo (json_encode(array('code'=>100,'msg'=>'no tournament for this user','sumId'=>$summonerId,'server'=>$server)));
+    }
+
+    break;
+  case "getTournament":
+    $tournamentName = check_tournamentName();
+    $server= check_server();
+    if($tournamentName && $server){
+      $getTournament = $bdd->prepare("
+SELECT * FROM `tournament_t` WHERE tournament_name = :tournamentName AND server_tournament = :server");
+      $getTournament->bindParam(":server",$server);
+      $getTournament->bindParam(":tournamentName",$tournamentName);
+
+    }
+    else{
+      echo (json_encode(array('code'=>100,'msg'=>'invalid values, server and tournament_name are needed','server'=>$server,'tournamentName'=>$tournamentName)));
+      die();
+    }
+    $res=$getTournament->execute();
+    $response= $getTournament-> fetch(PDO::FETCH_ASSOC);
+    if ($res && $response){
+      echo (json_encode(array('code'=>0,'msg'=>'ok','data'=>$response)));
+    }
+    else {
+      echo (json_encode(array('code'=>100,'msg'=>'no tournament with this name','tournamentName'=>$tournamentName,'server'=>$server)));
+    }
+
+    break;
+  case "getParticipants":
+    $tournamentId = check_idTournament();
+    if($tournamentId){
+      $getParticipants = $bdd->prepare("SELECT pseudo,summonerId,post_pref1,post_pref2 FROM `tournament_to_user` NATURAL JOIN user_t WHERE `id_tournament` = :idT");
+      $getParticipants->bindParam(":idT",$tournamentId);
+    }
+    else{
+      echo (json_encode(array('code'=>100,'msg'=>'invalid values, idTournament is needed','idTournament'=>$tournamentId)));
+      die();
+    }
+    $res=$getParticipants->execute();
+    $response = array();
+    if ($res){
+      while($row= $getParticipants-> fetch(PDO::FETCH_ASSOC)){
+        array_push($response,$row);
+      }
+      echo (json_encode(array('code'=>0,'msg'=>'ok','data'=>$response)));
+    }
+    else {
+      echo (json_encode(array('code'=>100,'msg'=>'participant for this tournament','idTournament'=>$tournamentId)));
     }
 
     break;

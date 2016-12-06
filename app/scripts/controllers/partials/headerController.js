@@ -14,9 +14,8 @@ $scope.tournamentList = function () {
 }
 }
     $scope.tournamentLink = function(name,server){
-      //$location.path('/tournament/EUW/montournois');
+      $location.path('/tournament/'+server+'/'+name);
       console.log(name,server);
     };
-    console.log($scope.server,$scope.sumId)
 
   });

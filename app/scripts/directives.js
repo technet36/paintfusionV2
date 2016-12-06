@@ -35,6 +35,27 @@ angular.module('paintfusionApp')
       templateUrl:'views/partials/matrixDirective.html'
     }
   })
+  .directive('infoTournament', function() {
+    return {
+      restrict: 'E',
+      scope: {
+        tournamentName: '=tournamentName',
+        tournamentServer: '=tournamentServer'
+      },
+      controller:'InfoTournamentCtrl',
+      templateUrl:'views/partials/infoTournamentDirective.html'
+    }
+  })
+  .directive('participantsList', function() {
+    return {
+      restrict: 'E',
+      scope: {
+        tournamentId: '=tournamentId'
+      },
+      controller:'ParticipantsListCtrl',
+      templateUrl:'views/partials/participantsListDirective.html'
+    }
+  })
   .directive('myNav',function() {
     return {
     restrict: 'E',
