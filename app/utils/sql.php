@@ -159,10 +159,19 @@ $mail = $_GET['mail'];
     return true;
   else return false;
 };
+function check_role1(){
+  $role1= $_GET['role1'];
+  return ( preg_match('/top|jungle|mid|adc|support|anything/',$role1)) ? $role1: false;
+};
+function check_role2(){
+  $role2= $_GET['role2'];
+  return ( preg_match('/top|jungle|mid|adc|support|anything/',$role2)) ? $role2: false;
+};
+
 //########################
 function check_action(){
   $action= $_GET['action'];
-  return ( preg_match('/login|signup|getParticipants|getTournament|userExist|searchTournament|userProfile|createTournament/',$action)) ? $action: false;
+  return ( preg_match('/login|signup|getParticipants|addUserToTournament|getTournament|userExist|searchTournament|userProfile|createTournament/',$action)) ? $action: false;
 };
 function encrypt_password ($pass) {
   $pass.="é(-è_%ù*µ^schbjoui¨?bgv,:!RTDJtf§1996";
@@ -233,7 +242,7 @@ switch (check_action()){
     }
     else {
       //header("location: ../error.php?error=".$e->getMessage());
-      echo (json_encode(array('code'=>1,'msg'=>'invalid values. pseudo, password and server are needed')));
+      echo (json_encode(array('code'=>101,'msg'=>'invalid values. pseudo, password and server are needed')));
       die();
     }
     $user->execute();
@@ -249,6 +258,9 @@ switch (check_action()){
           'msg'=> 'login done',
           'matrix'=>$profil['mat_gen'],
           'status'=>$profil['status'],
+          'pseudo'=>$pseudo,
+          'server'=>$server,
+          'userId'=>$profil['id_user'],
           'sumId'=>$profil['summonerId']
         )
       ));
@@ -256,7 +268,7 @@ switch (check_action()){
     else{
       echo (json_encode(array(
           'code'=> 1,
-          'msg'=> 'Wrong combinaison'
+          'msg'=> 'Wrong combinaison or no user'
         )
       ));
     }
@@ -282,7 +294,7 @@ switch (check_action()){
       $insert->bindParam(':sumId',$sumId);
     }
     else {
-      echo (json_encode(array('code'=>1,'msg'=>'invalid values. pseudo, password, summonerId and server are needed')));
+      echo (json_encode(array('code'=>101,'msg'=>'invalid values. pseudo, password, summonerId and server are needed')));
       die();
     }
     $bdd->beginTransaction();
@@ -310,28 +322,28 @@ switch (check_action()){
   case "userExist":
     $server= check_server();
     $pseudo= check_pseudo();
-    $summonerId = check_summonerId();
+    //$summonerId = check_summonerId();
     if ($server && $pseudo){
-      $sql = 'SELECT COUNT(*) AS `exist` FROM `paintfusion`.`user_t` WHERE pseudo=\''.$pseudo.'\' AND server=\''.$server.'\'';
+      $sql = "SELECT *, COUNT(*) AS `exist` FROM `paintfusion`.`user_t` WHERE pseudo='".$pseudo."' AND server='".$server."'";
     }
-    elseif ($server && $summonerId) {
-      $sql = 'SELECT COUNT(*) AS `exist` FROM `paintfusion`.`user_t` WHERE summonerId=\''.$summonerId.'\' AND server=\''.$server.'\'';
-    }
+   // elseif ($server && $summonerId) {
+   //   $sql = 'SELECT COUNT(*) AS `exist`,* FROM `paintfusion`.`user_t` WHERE summonerId=\''.$summonerId.'\' AND server=\''.$server.'\'';
+   // }
     else {
       header("location: ../error.php?error=".$e->getMessage());
-      echo (json_encode(array('code'=>0,'msg'=>'invalid values, pseudo and/or summonerId and server are needed')));
+      echo (json_encode(array('code'=>101,'msg'=>'invalid values, pseudo and/or summonerId and server are needed')));
       die();
     }
     $res = $bdd->query($sql);
     if(!$res){
-      echo (json_encode(array('code'=>2,'msg'=>'Unable to reach the bdd')));
+      echo (json_encode(array('code'=>200,'msg'=>'Unable to reach the bdd')));
       die();
     }
-    $response= $res-> fetch();
+    $response= $res-> fetch(PDO::FETCH_ASSOC);
     if (isset($response['exist']) && $response['exist']==1)
-      echo (json_encode(array('code'=>1,'msg'=>'the user exist')));
+      echo (json_encode(array('code'=>0,'msg'=>'the user exist','data'=>$response)));
     else
-      echo (json_encode(array('code'=>2,'msg'=>'no account for this user (or several)')));
+      echo (json_encode(array('code'=>1,'msg'=>'no account for this user (or several)')));
       break;
   case "userProfile":
 
@@ -346,7 +358,7 @@ switch (check_action()){
     }
     else {
       header("location: ../error.php?error=".$e->getMessage());
-      echo (json_encode(array('code'=>0,'msg'=>'invalid values, pseudo and/or summonerId and server are needed')));
+      echo (json_encode(array('code'=>101,'msg'=>'invalid values, pseudo and/or summonerId and server are needed')));
       die();
     }
     $res = $bdd->query($sql);
@@ -389,7 +401,7 @@ INSERT INTO tournament_t (`tournament_name`, `state`, `host`, `privacy_lvl`, `to
       $insertTournament->bindParam(":server",$server);
     }
     else {
-      echo (json_encode(array('code'=>1,'msg'=>'invalid values. tournamentName, host, map, date, server and registrationMaxDate are needed','name'=>$tournamentName,'host'=>$host,'map'=>$map,'date'=>$date,'server'=>$server,'maxDate'=>$registrationMaxDate)));
+      echo (json_encode(array('code'=>101,'msg'=>'invalid values. tournamentName, host, map, date, server and registrationMaxDate are needed','name'=>$tournamentName,'host'=>$host,'map'=>$map,'date'=>$date,'server'=>$server,'maxDate'=>$registrationMaxDate)));
       die();
     }
     $insertTournament->execute();
@@ -409,7 +421,7 @@ WHERE user_t.server = :server AND user_t.summonerId = :summonerId");
 
     }
     else{
-      echo (json_encode(array('code'=>100,'msg'=>'invalid values, server and summonerId are needed','server'=>$server,'summonerId'=>$summonerId)));
+      echo (json_encode(array('code'=>101,'msg'=>'invalid values, server and summonerId are needed','server'=>$server,'summonerId'=>$summonerId)));
       die();
     }
     $res=$searchTournament->execute();
@@ -437,7 +449,7 @@ SELECT * FROM `tournament_t` WHERE tournament_name = :tournamentName AND server_
 
     }
     else{
-      echo (json_encode(array('code'=>100,'msg'=>'invalid values, server and tournament_name are needed','server'=>$server,'tournamentName'=>$tournamentName)));
+      echo (json_encode(array('code'=>101,'msg'=>'invalid values, server and tournament_name are needed','server'=>$server,'tournamentName'=>$tournamentName)));
       die();
     }
     $res=$getTournament->execute();
@@ -453,11 +465,11 @@ SELECT * FROM `tournament_t` WHERE tournament_name = :tournamentName AND server_
   case "getParticipants":
     $tournamentId = check_idTournament();
     if($tournamentId){
-      $getParticipants = $bdd->prepare("SELECT pseudo,summonerId,post_pref1,post_pref2 FROM `tournament_to_user` NATURAL JOIN user_t WHERE `id_tournament` = :idT");
+      $getParticipants = $bdd->prepare("SELECT pseudo,summonerId,post_pref1,post_pref2,server FROM `tournament_to_user` NATURAL JOIN user_t WHERE `id_tournament` = :idT");
       $getParticipants->bindParam(":idT",$tournamentId);
     }
     else{
-      echo (json_encode(array('code'=>100,'msg'=>'invalid values, idTournament is needed','idTournament'=>$tournamentId)));
+      echo (json_encode(array('code'=>101,'msg'=>'invalid values, idTournament is needed','idTournament'=>$tournamentId)));
       die();
     }
     $res=$getParticipants->execute();
@@ -473,9 +485,51 @@ SELECT * FROM `tournament_t` WHERE tournament_name = :tournamentName AND server_
     }
 
     break;
+  case "addUserToTournament":
+    $tournamentId = check_idTournament();
+    $userId = check_idUser();
+    $role1 = check_role1();
+    $role2 = check_role2();
+
+    if ($tournamentId & $userId){
+      $check_right = $bdd->prepare("SELECT COUNT(*) AS exist FROM tournament_to_user WHERE id_tournament=:idT AND id_user=:userId");
+      $check_right->bindParam(":idT",$tournamentId);
+      $check_right->bindParam(":userId",$userId);
+
+
+      $insertUserToTournament = $bdd->prepare("
+INSERT INTO `tournament_to_user`(`id_tournament`, `id_user`, `post_pref1`, `post_pref2`) VALUES (:idT,:userId,:role1,:role2)");
+      $insertUserToTournament->bindParam(":idT",$tournamentId);
+      $insertUserToTournament->bindParam(":userId",$userId);
+      $insertUserToTournament->bindParam(":role1",$role1);
+      $insertUserToTournament->bindParam(":role2",$role2);
+
+    }
+    else {
+      echo (json_encode(array('code'=>101,'msg'=>'invalid values. tournamentId, summonerId, role1, and role2','tournamentId'=>$tournamentId,"summonerId"=>$summonerId,"role1"=>$role1,'role2'=>$role2)));
+      die();
+    }
+
+    $bdd->beginTransaction();
+    $check_right->execute();
+    $player = $check_right->fetch();
+      if(!$player){
+        echo (json_encode(array('code'=>200,'msg'=>'Unable to reach the bdd')));
+        die();
+      }
+    $isPlayer = $player['exist'];
+    if (!$isPlayer){
+      $insertUserToTournament->execute();
+      echo (json_encode(array('code'=>0,'msg'=>'Registration done')));
+    }
+    else
+      echo (json_encode(array('code'=>1,'msg'=>'player already register in this tournament')));
+
+    $bdd->commit();
+        break;
   default:
       //header("location: ../error.php?error=".$e->getMessage());
-      echo (json_encode(array('code'=>1,'msg'=>'failed sql.php','action'=>check_action())));
+      echo (json_encode(array('code'=>100,'msg'=>'failed sql.php','action'=>check_action())));
       die();
         break;
 

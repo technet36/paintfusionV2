@@ -1,5 +1,8 @@
 <h1>{{tournament}}</h1>
-<div class="container-fluid">
-  <info-tournament tournament-name="tournament" tournament-server="server"></info-tournament>
-  <participants-list tournament-id="data.id_tournament" ></participants-list>
+<div class="container-fluid row">
+  <div class="col-xs-6">
+    <info-tournament class="row" tournament-name="tournament" tournament-server="server"></info-tournament>
+    <tournament-registration ng-if="dataOk" class="row" tournament-id="data.id_tournament"></tournament-registration>
+  </div>
+  <participants-list ng-if="dataOk" class="col-xs-6" tournament-id="data.id_tournament" ></participants-list>
 </div>

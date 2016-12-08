@@ -25,7 +25,7 @@ angular.module('paintfusionApp')
       return $cookies.getObject('me');
     };
     this.putMe = function (me){
-      $cookies.putObject('me',me,cookiesOpt);
+        $cookies.putObject('me',me,cookiesOpt);
     };
     this.resolveSummonerSpell = function(spellId){
       var tab = ['','Boost','','Exhaust','Flash','','Haste','Heal','','','','Smite','Teleport','Mana','Dot'];

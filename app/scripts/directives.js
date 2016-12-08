@@ -56,6 +56,16 @@ angular.module('paintfusionApp')
       templateUrl:'views/partials/participantsListDirective.html'
     }
   })
+  .directive('tournamentRegistration', function() {
+    return {
+      restrict: 'E',
+      scope: {
+        tournamentId: '=tournamentId'
+      },
+      controller:'TournamentRegistrationCtrl',
+      templateUrl:'views/partials/tournamentRegistrationDirective.html'
+    }
+  })
   .directive('myNav',function() {
     return {
     restrict: 'E',

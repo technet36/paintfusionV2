@@ -27,15 +27,9 @@ var that = this;
     };
 
     this.getUser = function(pseudo, server) {
-
-      return $http.get("http://localhost:80/paintfusion/app/utils/sql.php?action=userExist&server="+server+"&pseudo="+pseudo).then(function (data){
-        return {'code': data.data.code, 'msg':data.data.msg};
-      });
-    };
-
-    this.login = function (pseudo, server, password ){
       var deferred = $q.defer();
-      return $http.get("http://localhost:80/paintfusion/app/utils/sql.php?action=login&server="+server+"&pseudo="+pseudo+"&password="+password).then(function(data){
+      return $http.get("http://localhost:80/paintfusion/app/utils/sql.php?action=userExist&server="+server+"&pseudo="+pseudo).then(function(data){
+        console.log(data);
         if(data.data.code)
           deferred.reject(data.data);
         else{
@@ -52,10 +46,37 @@ var that = this;
         }
 
         return deferred.promise;
-        },function(reason){
-            deferred.reject(reason);
-            return deferred.promise;
-          });
+      },function(reason){
+        deferred.reject(reason);
+        return deferred.promise;
+      });
+    };
+
+    this.login = function (pseudo, server, password ){
+      var deferred = $q.defer();
+      return $http.get("http://localhost:80/paintfusion/app/utils/sql.php?action=login&server="+server+"&pseudo="+pseudo+"&password="+password).then(function(data){
+        if(data.data.code)
+          deferred.reject(data.data);
+        else{
+          deferred.resolve(data.data);
+          console.log("data");
+          console.log(data.data);
+          var cookie = {
+            'pseudo':data.data.pseudo,
+            'matrix':data.data.matrix,
+            'sumId':data.data.sumId,
+            'privacyLvl':data.data.privacyLvl,
+            'server':data.data.server,
+            'userId':data.data.userId,
+            'status':data.data.status
+          };
+          autreService.putMe(cookie);
+        }
+        return deferred.promise;
+      },function(reason){
+        deferred.reject(reason);
+        return deferred.promise;
+      });
     };
 
     this.createTournament = function (form) {
@@ -97,6 +118,17 @@ var that = this;
     this.getParticipants= function (idT) {
       var deferred = $q.defer();
       return $http.get("http://localhost:80/paintfusion/app/utils/sql.php?action=getParticipants&idTournament="+idT).then(function(data){
+        data.data.code>=100?deferred.reject(data.data):deferred.resolve(data.data);
+        return deferred.promise;
+      },function(reason){
+        deferred.reject(reason);
+        return deferred.promise;
+      });
+    };
+
+    this.addUserToTournament= function (idT,idUser,role1, role2) {
+      var deferred = $q.defer();
+      return $http.get("http://localhost:80/paintfusion/app/utils/sql.php?action=addUserToTournament&idTournament="+idT+"&idUser="+idUser+"&role1="+role1+"&role2="+role2).then(function(data){
         data.data.code>=100?deferred.reject(data.data):deferred.resolve(data.data);
         return deferred.promise;
       },function(reason){
