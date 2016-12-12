@@ -485,7 +485,7 @@ SELECT * FROM `tournament_t` WHERE tournament_name = :tournamentName AND server_
     }
 
     break;
-  case "addUserToTournament":
+  case "addUserToTournament": //TODO: test max date and player
     $tournamentId = check_idTournament();
     $userId = check_idUser();
     $role1 = check_role1();
